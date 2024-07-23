@@ -1,0 +1,31 @@
+{
+  "total": 5,
+  "pass": 80,
+  "list": [
+    {
+      "question": "我愛你",
+      "score": 20,
+      "answer": ["I love you", "I like you"]
+    },
+    {
+      "question": "我是男人",
+      "score": 20,
+      "answer": ["I am a man", "I am a guy"]
+    },
+    {
+      "question": "我是女人",
+      "score": 20,
+      "answer": ["I am a woman", "I am a lady"]
+    },
+    {
+      "question": "我是小孩",
+      "score": 20,
+      "answer": ["I am a kid", "I am a child"]
+    },
+    {
+      "question": "我愛散步",
+      "score": 20,
+      "answer": ["I enjoy taking a walk", "I like to take a walk"]
+    }
+]
+}

@@ -1,0 +1,31 @@
+{
+  "total": 5,
+  "pass": 40,
+  "list": [
+    {
+      "question": "愛",
+      "score": 20,
+      "answer": ["love", "like"]
+    },
+    {
+      "question": "男人",
+      "score": 20,
+      "answer": ["man", "guy"]
+    },
+    {
+      "question": "女人",
+      "score": 20,
+      "answer": ["woman", "women"]
+    },
+    {
+      "question": "小孩",
+      "score": 20,
+      "answer": ["kid", "child", "children"]
+    },
+    {
+      "question": "散步",
+      "score": 20,
+      "answer": ["take a walk"]
+    }
+]
+}

@@ -1,0 +1,162 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>欣騰達科技</title>
+<link href="css/multiColumnTemplate.css" rel="stylesheet" type="text/css">
+	<style>
+
+a.menuItem {
+    text-decoration:none;
+    color: #FFFFFF;
+}
+a.menuItem:hover {
+	color: greenyellow;
+	cursor: pointer;
+}
+a.golink {
+    text-decoration:none;
+    color: red;
+}
+a.golink2 {
+    text-decoration:none;
+    color: #FFFFFF;
+}
+#service {
+	        display: none;
+}
+#about {
+	        display: block;
+}
+#train {
+	        display: none;
+}
+#contact {
+	        display: none;
+}
+	</style>
+	<script>
+		function handleClick(i) {
+          document.getElementById("about").style.display="none";
+          document.getElementById("train").style.display="none";
+          document.getElementById("contact").style.display="none";
+          document.getElementById("service").style.display="none";
+      switch (i){
+        case 0:
+          document.getElementById("about").style.display="block";
+          break;
+        case 1:
+          document.getElementById("service").style.display="block";
+          break;
+        case 2:
+          document.getElementById("train").style.display="block";
+          break;
+        case 3:
+          document.getElementById("contact").style.display="block";
+          break;
+      }
+    }
+	</script>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="primary_header">
+      <h1 class="title">欣騰達科技有限公司</h1>
+    </div>
+    <nav class="secondary_header" id="menu">
+      <ul>
+		<li><a class="menuItem" href="javascript:handleClick(0)">關於我們</a></li>
+        <li><a class="menuItem" href="javascript:handleClick(1)">服務項目</a></li>
+        <li><a class="menuItem" href="javascript:handleClick(2)">科技新知</a></li>
+        <li><a class="menuItem" href="javascript:handleClick(3)">聯絡我們</a></li>
+      </ul>
+    </nav>
+  </header>
+  <section id="about">
+    <h2 class="noDisplay">About</h2>
+    <article class="left_article">
+      <h3>關於我們</h3>
+      <p>我們是一群擁有資訊，電機，通訊，經濟，化工，日文等經驗和學歷的創業家，</p>
+      <p>我們的目標是運用數位科技來成就美好的生活，歡迎和我們洽談合作事項。</p>
+    </article>
+    <aside class="right_article">
+        <img src="images/img_aboutUs.jpg" alt="" width="400" height="200" class="placeholder"/> 
+      </aside>
+  </section>
+  <section id="service">
+    <h2 class="noDisplay">SERVICE</h2>
+    <article class="left_article">
+      <h3>服務項目</h3>
+      <p>1.提供專業的技術諮詢</p>
+      <p>2.安排專業人員為您達成各式各樣的需求</p>
+      <p>3.製作客製的軟體</p>
+    </article>
+    <aside class="right_article"><img src="images/img_website.jpg" alt="" width="400" height="200" class="placeholder"/> </aside>
+  </section>
+  <section id="train">
+    <h2 class="noDisplay">Train</h2>
+    <article class="left_article">
+      <h3>5G簡介</h3>
+      <p>5G的就是5th generation mobile networks(第五代移動通信技術)，是4G的下一代技術。</p>
+      <p>5G的速度比4G更快，5G速度是4G的10~100倍，5G每平方公里可連接上百萬個裝置，有望達到萬物聯網的境界。</p>
+      <p>5G因為萬物互聯，速度又快，在應用上可以達到萬物零距離溝通的效果，是人類未來最重要的進步之一。</p>
+      <h3>Deep Learning簡介</h3>
+      <p>Deep Learning就是深度學習，是使用數學計算來模仿生物神經系統的做法。因為是模仿生物神經系統，所以可以達到類似生物能辨識影像，辨識聲音或判斷是非的能力。</p>
+      <p>就像生物需要學習，Deep Learning的做法也需要有學習的過程稱為訓練(Training)，訓練大概是透過收集大量的相關資料，然後對這些相關資料進行數學計算，然後根據計算結果來調整計算公式，以便以後遇到全新的資料時，可以得到預期的計算結果。</p>
+      <p>Deep Learning需要大量且快速的計算，拜科技的日新月異，現在的電腦已經可以符合此需求，因此各種利用Deep Learning的應用正在快速的展開中。</p>
+    </article>
+    <aside class="right_article"><img src="images/5G_1.jpg" alt="" width="400" height="200" class="placeholder"/> </aside>
+  </section>
+  <section id="contact">
+    <h2 class="noDisplay">Content</h2>
+    <article class="left_article">
+      <h3>聯絡我們</h3>
+      <p>email:</p>
+      <p>yoko7890y@gmail.com</p>
+    </article>
+    <aside class="right_article"><img src="images/company1.jpg" alt="" width="400" height="200" class="placeholder"/> </aside>
+  </section>
+  <div class="row">
+    <div class="columns">
+      <p class="thumbnail_align"> <img src="images/hot1.jpg" alt="" class="thumbnail"/> </p>
+      <h4>youtube頻道製作</h4>
+      <p>將您的想法和點子，轉成youtube頻道。</p>
+      <p><a class="golink" href="https://www.youtube.com/@xkntown">youtube頻道作品</a></p>
+    </div>
+    <div class="columns">
+      <p class="thumbnail_align"> <img src="images/hot2.jpg" alt="" class="thumbnail"/> </p>
+      <h4>網站經營</h4>
+      <p>幫助網站經營, 解決各種網站技術問題。</p>
+      <p><a class="golink" href="https://wworld.cc">網站參考作品</a></p>
+    </div>
+    <div class="columns">
+      <p class="thumbnail_align"> <img src="images/hot3.jpg" alt="" class="thumbnail"/></p>
+
+      <h4>AI應用</h4>
+      <p>應用AI技術，將工作變簡單。</p>
+      <p>參考作品:<br>PC程式，可用camera辨識文書中的文字。</p>
+    </div>
+    <div class="columns">
+      <p class="thumbnail_align"> <img src="images/hot4.jpg" alt="" class="thumbnail"/> </p>
+      <h4>各種通訊軟體</h4>
+      <p>應用通訊技術，整合分散各地的工作。</p>
+      <p>參考作品:<br>藍芽傳輸程式，雲端應用程式</p>
+    </div>
+  </div>
+  <div class="row blockDisplay">
+    <div class="column_half left_half">
+      <h2 class="column_title"><a class="golink2" href="https://www.youtube.com/c/GrandmaCan%E6%88%91%E9%98%BF%E5%AC%A4%E9%83%BD%E6%9C%83/videos">學技術好站介紹</a></h2>
+    </div>
+    <div class="column_half right_half">
+      <h2 class="column_title"><a class="golink2" href="https://www.youtube.com/@NetNinja">學技術好站介紹(全英文)</a></h2>
+    </div>
+  </div>
+  <footer class="secondary_header footer">
+    <div class="copyright">&copy;2023 - <strong>欣騰達科技有限公司</strong></div>
+  </footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,10 @@
+[
+    {
+      "file": "db/test1.json",
+      "description": "basic sentences"
+    },
+    {
+      "file": "db/test2.json",
+      "description": "basic vocabulary"
+    }
+]
