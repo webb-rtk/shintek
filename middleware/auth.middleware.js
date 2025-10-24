@@ -8,9 +8,10 @@ const logger = require('../utils/logger.util');
 const authenticateApiKey = (req, res, next) => {
   const apiKey = req.headers['x-api-key'] || req.query.apiKey;
 
-  // Skip authentication in development if no API_SECRET_KEY is set
-  if (process.env.NODE_ENV === 'development' && !process.env.API_SECRET_KEY) {
-    logger.warn('API authentication disabled in development mode');
+  // Skip authentication in development if no API_SECRET_KEY is set or is default
+  const isDefaultKey = !process.env.API_SECRET_KEY || process.env.API_SECRET_KEY === 'your_secret_key_here';
+  if (process.env.NODE_ENV === 'development' && isDefaultKey) {
+    logger.warn('API authentication disabled in development mode (no valid API_SECRET_KEY set)');
     return next();
   }
 

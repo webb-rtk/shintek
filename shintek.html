@@ -36,6 +36,75 @@ a.golink2 {
 #contact {
 	        display: none;
 }
+#aichat {
+	        display: none;
+}
+.chat-container {
+	max-width: 800px;
+	margin: 20px auto;
+	background: white;
+	border-radius: 10px;
+	box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+	padding: 20px;
+}
+.chat-messages {
+	height: 400px;
+	overflow-y: auto;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	padding: 15px;
+	margin-bottom: 15px;
+	background: #f9f9f9;
+}
+.message {
+	margin-bottom: 15px;
+	padding: 10px 15px;
+	border-radius: 8px;
+	max-width: 80%;
+}
+.message.user {
+	background: #007bff;
+	color: white;
+	margin-left: auto;
+	text-align: right;
+}
+.message.bot {
+	background: #e9ecef;
+	color: #333;
+	margin-right: auto;
+	white-space: pre-wrap;
+}
+.chat-input-container {
+	display: flex;
+	gap: 10px;
+}
+.chat-input {
+	flex: 1;
+	padding: 10px;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	font-size: 14px;
+}
+.chat-button {
+	padding: 10px 20px;
+	background: #007bff;
+	color: white;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 14px;
+}
+.chat-button:hover {
+	background: #0056b3;
+}
+.chat-button:disabled {
+	background: #6c757d;
+	cursor: not-allowed;
+}
+.loading {
+	color: #666;
+	font-style: italic;
+}
 	</style>
 	<script>
 		function handleClick(i) {
@@ -43,6 +112,7 @@ a.golink2 {
           document.getElementById("train").style.display="none";
           document.getElementById("contact").style.display="none";
           document.getElementById("service").style.display="none";
+          document.getElementById("aichat").style.display="none";
       switch (i){
         case 0:
           document.getElementById("about").style.display="block";
@@ -56,8 +126,105 @@ a.golink2 {
         case 3:
           document.getElementById("contact").style.display="block";
           break;
+        case 4:
+          document.getElementById("aichat").style.display="block";
+          break;
       }
     }
+
+    let sessionId = null;
+
+    async function sendMessage() {
+        const input = document.getElementById('chatInput');
+        const messagesDiv = document.getElementById('chatMessages');
+        const sendBtn = document.getElementById('sendBtn');
+        const message = input.value.trim();
+
+        if (!message) return;
+
+        // Add user message to UI
+        addMessageToUI(message, 'user');
+        input.value = '';
+        sendBtn.disabled = true;
+
+        // Show loading indicator
+        const loadingId = addMessageToUI('正在思考中...', 'bot', true);
+
+        try {
+            // Call API
+            const response = await fetch('/api/gemini/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                    // API key not required in development mode
+                },
+                body: JSON.stringify({
+                    messages: [{ role: 'user', content: message }],
+                    sessionId: sessionId
+                })
+            });
+
+            const data = await response.json();
+
+            // Remove loading indicator
+            removeMessage(loadingId);
+
+            if (data.success) {
+                // Update session ID
+                sessionId = data.data.sessionId;
+
+                // Add bot response to UI
+                addMessageToUI(data.data.reply, 'bot');
+            } else {
+                let errorMsg = '錯誤: ' + data.message;
+                if (data.errors && data.errors.length > 0) {
+                    errorMsg += '\n詳細: ' + data.errors.map(e => e.msg || e.message).join(', ');
+                }
+                addMessageToUI(errorMsg, 'bot');
+                console.error('API Error:', data);
+            }
+        } catch (error) {
+            removeMessage(loadingId);
+            addMessageToUI('連接錯誤: ' + error.message, 'bot');
+        } finally {
+            sendBtn.disabled = false;
+        }
+    }
+
+    function addMessageToUI(text, role, isLoading = false) {
+        const messagesDiv = document.getElementById('chatMessages');
+        const messageDiv = document.createElement('div');
+        const messageId = 'msg-' + Date.now();
+        messageDiv.id = messageId;
+        messageDiv.className = 'message ' + role + (isLoading ? ' loading' : '');
+        messageDiv.textContent = text;
+        messagesDiv.appendChild(messageDiv);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        return messageId;
+    }
+
+    function removeMessage(messageId) {
+        const message = document.getElementById(messageId);
+        if (message) message.remove();
+    }
+
+    function clearChat() {
+        sessionId = null;
+        document.getElementById('chatMessages').innerHTML = '';
+        addMessageToUI('對話已清除。您好！我是 AI 助手，有什麼可以幫助您的嗎？', 'bot');
+    }
+
+    // Allow Enter key to send message
+    document.addEventListener('DOMContentLoaded', function() {
+        const input = document.getElementById('chatInput');
+        if (input) {
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+        }
+    });
 	</script>
 </head>
 <body>
@@ -72,6 +239,7 @@ a.golink2 {
         <li><a class="menuItem" href="javascript:handleClick(1)">服務項目</a></li>
         <li><a class="menuItem" href="javascript:handleClick(2)">科技新知</a></li>
         <li><a class="menuItem" href="javascript:handleClick(3)">聯絡我們</a></li>
+        <li><a class="menuItem" href="javascript:handleClick(4)">AI 對話</a></li>
       </ul>
     </nav>
   </header>
@@ -118,6 +286,41 @@ a.golink2 {
       <p>yoko7890y@gmail.com</p>
     </article>
     <aside class="right_article"><img src="images/company1.jpg" alt="" width="400" height="200" class="placeholder"/> </aside>
+  </section>
+  <section id="aichat">
+    <h2 class="noDisplay">AI Chat</h2>
+    <div class="chat-container">
+      <h3 style="text-align: center; color: #333; margin-bottom: 20px;">🤖 AI 智能對話助手</h3>
+      <p style="text-align: center; color: #666; margin-bottom: 20px;">
+        這是由 Google Gemini AI 驅動的智能對話系統。您可以問我任何問題！
+      </p>
+
+      <div id="chatMessages" class="chat-messages">
+        <div class="message bot">您好！我是 AI 助手，由 Google Gemini 提供支援。有什麼可以幫助您的嗎？</div>
+      </div>
+
+      <div class="chat-input-container">
+        <input
+          type="text"
+          id="chatInput"
+          class="chat-input"
+          placeholder="在這裡輸入您的問題..."
+          maxlength="500"
+        />
+        <button id="sendBtn" class="chat-button" onclick="sendMessage()">發送</button>
+        <button class="chat-button" onclick="clearChat()" style="background: #6c757d;">清除</button>
+      </div>
+
+      <div style="margin-top: 15px; padding: 10px; background: #fff3cd; border-radius: 5px; font-size: 12px;">
+        <strong>提示：</strong>
+        <ul style="margin: 5px 0; padding-left: 20px;">
+          <li>您可以用中文或英文與 AI 對話</li>
+          <li>按 Enter 鍵也可以發送訊息</li>
+          <li>對話會保持上下文連貫性</li>
+          <li>點擊「清除」可以開始新的對話</li>
+        </ul>
+      </div>
+    </div>
   </section>
   <div class="row">
     <div class="columns">

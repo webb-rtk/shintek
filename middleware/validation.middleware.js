@@ -61,22 +61,33 @@ const validateChat = [
     .withMessage('Messages are required')
     .isArray({ min: 1 })
     .withMessage('Messages must be a non-empty array'),
-  body('messages.*.role')
-    .isIn(['user', 'model'])
-    .withMessage('Message role must be either "user" or "model"'),
-  body('messages.*.content')
-    .notEmpty()
-    .withMessage('Message content is required')
-    .isString()
-    .withMessage('Message content must be a string'),
+  body('messages')
+    .custom((messages) => {
+      if (!Array.isArray(messages)) return false;
+      for (const msg of messages) {
+        if (!msg.role || !['user', 'model'].includes(msg.role)) {
+          throw new Error('Message role must be either "user" or "model"');
+        }
+        if (!msg.content || typeof msg.content !== 'string') {
+          throw new Error('Message content is required and must be a string');
+        }
+      }
+      return true;
+    }),
   body('model')
     .optional()
     .isString()
     .withMessage('Model must be a string'),
   body('sessionId')
-    .optional()
-    .isString()
-    .withMessage('SessionId must be a string'),
+    .custom((value) => {
+      if (value === null || value === undefined || value === '') {
+        return true; // Allow null, undefined, or empty string
+      }
+      if (typeof value !== 'string') {
+        throw new Error('SessionId must be a string');
+      }
+      return true;
+    }),
   validate
 ];
 
