@@ -7,6 +7,7 @@ let fs = require('fs');
 let bodyParser = require('body-parser');
 const geminiConfig = require('./config/gemini.config');
 const geminiRoutes = require('./routes/gemini.routes');
+const lineRoutes = require('./routes/line.routes');
 const { errorHandler, notFoundHandler } = require('./middleware/error.middleware');
 const logger = require('./utils/logger.util');
 
@@ -41,7 +42,11 @@ app.use(bodyParser.json());
 // Gemini API routes
 app.use('/api/gemini', geminiRoutes);
 
+// LINE Bot routes
+app.use('/line', lineRoutes);
+
 logger.info('Gemini AI API routes initialized');
+logger.info('LINE Bot routes initialized');
 app.get('/', (req, res) => {
 	  //res.send('Hello World!');
 	res.sendFile(path.join(__dirname, "shintek.html"));
