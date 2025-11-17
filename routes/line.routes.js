@@ -40,8 +40,10 @@ router.post('/webhook', async (req, res) => {
   logger.info('Webhook POST received - starting processing');
 
   try {
-    // If LINE middleware is available, use it for signature validation
-    if (lineMiddleware && handleEvent) {
+    const hasSignature = req.headers['x-line-signature'];
+
+    // If LINE middleware is available and request has signature, use it for validation
+    if (lineMiddleware && handleEvent && hasSignature) {
       logger.info('Using LINE middleware for signature validation');
 
       // Apply middleware manually
@@ -69,14 +71,24 @@ router.post('/webhook', async (req, res) => {
           res.status(500).json({ success: false, message: err.message });
         }
       });
-    } else {
-      // Fallback: respond without signature validation
-      logger.warn('LINE middleware not available, processing without signature validation');
+    } else if (!hasSignature) {
+      // No signature - this is a test request, not from LINE
+      logger.warn('No LINE signature found - processing as test request');
       const events = req.body.events || [];
-      logger.info('Received LINE webhook request:', JSON.stringify(req.body));
+      logger.info('Received webhook test request:', JSON.stringify(req.body));
+
       res.status(200).json({
         success: true,
-        message: 'Webhook received (SDK not configured properly)',
+        message: 'Test webhook received (no signature validation)',
+        note: 'Real LINE requests will include X-Line-Signature header',
+        eventsReceived: events.length
+      });
+    } else {
+      // SDK not loaded properly
+      logger.error('LINE SDK not loaded properly');
+      res.status(500).json({
+        success: false,
+        message: 'LINE SDK not configured properly',
         sdkLoaded: lineMiddleware !== null,
         handlerLoaded: handleEvent !== null
       });
