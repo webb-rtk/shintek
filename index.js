@@ -28,7 +28,8 @@ var https = require('https');
 //var certificate = fs.readFileSync('sslcert/ssl.csr', 'utf8');
 var privateKey  = fs.readFileSync('growingtek.com.tw/private.key', 'utf8');
 var certificate = fs.readFileSync('growingtek.com.tw/certificate.crt', 'utf8');
-var credentials = {key: privateKey, cert: certificate};
+var ca = fs.readFileSync('growingtek.com.tw/ca_bundle.crt', 'utf8');
+var credentials = {key: privateKey, cert: certificate, ca: ca};
 var httpsServer = https.createServer(credentials, app);
 
 // CORS configuration
