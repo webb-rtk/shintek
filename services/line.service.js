@@ -28,15 +28,24 @@ async function handleEvent(event) {
       logger.info(`Created new session ${sessionId} for LINE user ${userId}`);
     }
 
-    // Add user message to session
-    sessionService.addMessage(sessionId, 'user', userMessage);
-
     // Get conversation history
     const messages = sessionService.getMessages(sessionId);
 
+    // Add system instruction for Traditional Chinese if this is a new session
+    if (messages.length === 0) {
+      sessionService.addMessage(sessionId, 'user', '請用繁體中文回答所有問題。');
+      sessionService.addMessage(sessionId, 'model', '好的，我會使用繁體中文回答您的所有問題。');
+    }
+
+    // Add user message to session
+    sessionService.addMessage(sessionId, 'user', userMessage);
+
+    // Get updated conversation history
+    const updatedMessages = sessionService.getMessages(sessionId);
+
     // Generate response using Gemini AI
     logger.info('Generating response with Gemini AI...');
-    const geminiResponse = await geminiService.chat(messages, {
+    const geminiResponse = await geminiService.chat(updatedMessages, {
       model: 'gemini-2.0-flash-exp' // Using the fast model for quick responses
     });
 
