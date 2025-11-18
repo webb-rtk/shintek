@@ -43,6 +43,15 @@ app.use(cors({
 const limiter = rateLimit(geminiConfig.rateLimit);
 app.use('/api/gemini', limiter);
 
+// LINE Bot routes - MUST be before body-parser to preserve raw body for signature validation
+if (lineRoutes) {
+  app.use('/line', lineRoutes);
+  logger.info('LINE Bot routes initialized');
+} else {
+  logger.warn('LINE Bot routes not available');
+}
+
+// Body parser for other routes (after LINE routes)
 app.use(bodyParser.urlencoded({
 	extended: true
   }));
@@ -50,14 +59,6 @@ app.use(bodyParser.json());
 
 // Gemini API routes
 app.use('/api/gemini', geminiRoutes);
-
-// LINE Bot routes
-if (lineRoutes) {
-  app.use('/line', lineRoutes);
-  logger.info('LINE Bot routes initialized');
-} else {
-  logger.warn('LINE Bot routes not available');
-}
 
 logger.info('Gemini AI API routes initialized');
 app.get('/', (req, res) => {
