@@ -114,6 +114,7 @@ app.get('/images/hot4.jpg', function (req, res) {
 	res.setHeader('Content-type' , 'image/jpg');
 	res.end(data);
 });
+app.use('/.well-known', express.static(path.join(__dirname, '.well-known')));
 // Error handlers (must be after all routes)
 app.use(notFoundHandler);
 app.use(errorHandler);
