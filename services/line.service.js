@@ -33,7 +33,7 @@ async function handleEvent(event) {
 
     // Add system instruction for Traditional Chinese and company info if this is a new session
     if (messages.length === 0) {
-      const companyInfo = `你是一個專業的客服助理，負責回答關於我們公司的問題。
+      const companyInfo = `你是一個專業的客服助理，負責回答關於你任職的公司的問題。
 
 公司資訊：
 
