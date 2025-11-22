@@ -35,8 +35,14 @@ class SessionService {
 
     // Check if session has expired
     if (Date.now() - session.lastAccessedAt > this.sessionTimeout) {
-      this.sessions.delete(sessionId);
-      return null;
+      // Count the number of responses (model messages) in the session
+      const responseCount = session.messages.filter(msg => msg.role === 'model').length;
+
+      // Only clear session if response count is 100 or more
+      if (responseCount >= 100) {
+        this.sessions.delete(sessionId);
+        return null;
+      }
     }
 
     // Update last accessed time
@@ -107,6 +113,7 @@ class SessionService {
 
   /**
    * Clean up expired sessions (can be run periodically)
+   * Only clears sessions with 100+ responses after 30 minutes of inactivity
    */
   cleanupExpiredSessions() {
     const now = Date.now();
@@ -114,8 +121,14 @@ class SessionService {
 
     for (const [sessionId, session] of this.sessions.entries()) {
       if (now - session.lastAccessedAt > this.sessionTimeout) {
-        this.sessions.delete(sessionId);
-        cleanedCount++;
+        // Count the number of responses (model messages) in the session
+        const responseCount = session.messages.filter(msg => msg.role === 'model').length;
+
+        // Only clear session if response count is 100 or more
+        if (responseCount >= 100) {
+          this.sessions.delete(sessionId);
+          cleanedCount++;
+        }
       }
     }
 
