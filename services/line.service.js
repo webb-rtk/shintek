@@ -83,7 +83,7 @@ async function handleEvent(event) {
     // Reply to the user
     const reply = {
       type: 'text',
-      text: geminiResponse.reply
+      text: geminiResponse.reply.trim()
     };
 
     return client.replyMessage(event.replyToken, reply);
