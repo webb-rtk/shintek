@@ -11,8 +11,24 @@ const lineUserSessions = new Map();
 
 async function handleEvent(event) {
   try {
-    if (event.type !== 'message' || event.message.type !== 'text') {
-      // Ignore non-text messages
+    if (event.type !== 'message') {
+      // Ignore non-message events
+      return Promise.resolve(null);
+    }
+
+    // Handle sticker messages
+    if (event.message.type === 'sticker') {
+      logger.info(`Received sticker from LINE user ${event.source.userId}`);
+      const stickerReply = {
+        type: 'text',
+        text: '謝謝您的貼圖！😊 有什麼我可以幫您的嗎？'
+      };
+      return client.replyMessage(event.replyToken, stickerReply);
+    }
+
+    if (event.message.type !== 'text') {
+      // Ignore other non-text messages (image, video, audio, etc.)
+      logger.info(`Received non-text message type: ${event.message.type}`);
       return Promise.resolve(null);
     }
 
