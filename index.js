@@ -7,6 +7,7 @@ let fs = require('fs');
 let bodyParser = require('body-parser');
 const geminiConfig = require('./config/gemini.config');
 const geminiRoutes = require('./routes/gemini.routes');
+const adminRoutes = require('./routes/admin.routes');
 const { errorHandler, notFoundHandler } = require('./middleware/error.middleware');
 const logger = require('./utils/logger.util');
 
@@ -59,6 +60,10 @@ app.use(bodyParser.json());
 
 // Gemini API routes
 app.use('/api/gemini', geminiRoutes);
+
+// Admin routes
+app.use('/admin', adminRoutes);
+logger.info('Admin routes initialized at /admin');
 
 logger.info('Gemini AI API routes initialized');
 app.get('/', (req, res) => {
