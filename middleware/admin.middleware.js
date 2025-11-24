@@ -10,8 +10,8 @@ const SESSION_EXPIRY = 60 * 60 * 1000; // 1 hour
 
 // Admin credentials from environment variables
 const getAdminCredentials = () => ({
-  username: process.env.ADMIN_USERNAME || 'admin',
-  password: process.env.ADMIN_PASSWORD || 'admin123'
+  username: process.env.ADMIN_USERNAME || 'green',
+  password: process.env.ADMIN_PASSWORD || 'green77888'
 });
 
 /**
