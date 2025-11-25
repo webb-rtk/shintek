@@ -733,20 +733,29 @@
     // Load configuration
     async function loadConfig() {
       try {
+        console.log('Loading configuration...');
         const response = await fetch('/admin/api/config', {
           headers: { 'x-admin-token': token }
         });
+
+        console.log('Response status:', response.status);
 
         if (!response.ok) {
           if (response.status === 401) {
             localStorage.removeItem('adminToken');
             window.location.href = '/admin/login';
           }
-          const errorData = await response.json();
+          let errorData;
+          try {
+            errorData = await response.json();
+          } catch (e) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          }
           throw new Error(errorData.error + (errorData.details ? ': ' + errorData.details : ''));
         }
 
         const data = await response.json();
+        console.log('Configuration loaded:', data);
         const config = data.config;
 
         // Populate form fields

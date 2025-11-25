@@ -172,17 +172,23 @@ router.get('/api/config', (req, res) => {
   }
 
   try {
+    logger.info('Attempting to read config file from:', CONFIG_FILE);
+    logger.info('Config file exists:', fs.existsSync(CONFIG_FILE));
+
     if (!fs.existsSync(CONFIG_FILE)) {
-      return res.status(404).json({ error: 'Configuration file not found' });
+      return res.status(404).json({ error: 'Configuration file not found', path: CONFIG_FILE });
     }
 
     const configData = fs.readFileSync(CONFIG_FILE, 'utf8');
+    logger.info('Config data length:', configData.length);
+
     const config = JSON.parse(configData);
+    logger.info('Config parsed successfully');
 
     logger.info('Admin retrieved LINE configuration');
     res.json({ config });
   } catch (err) {
-    logger.error('Error reading configuration file', { error: err.message, stack: err.stack });
+    logger.error('Error reading configuration file', { error: err.message, stack: err.stack, configFile: CONFIG_FILE });
     res.status(500).json({ error: 'Failed to read configuration file', details: err.message });
   }
 });
