@@ -742,7 +742,8 @@
             localStorage.removeItem('adminToken');
             window.location.href = '/admin/login';
           }
-          throw new Error('Failed to load configuration');
+          const errorData = await response.json();
+          throw new Error(errorData.error + (errorData.details ? ': ' + errorData.details : ''));
         }
 
         const data = await response.json();

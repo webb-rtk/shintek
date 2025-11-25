@@ -182,8 +182,8 @@ router.get('/api/config', (req, res) => {
     logger.info('Admin retrieved LINE configuration');
     res.json({ config });
   } catch (err) {
-    logger.error('Error reading configuration file', { error: err.message });
-    res.status(500).json({ error: 'Failed to read configuration file' });
+    logger.error('Error reading configuration file', { error: err.message, stack: err.stack });
+    res.status(500).json({ error: 'Failed to read configuration file', details: err.message });
   }
 });
 

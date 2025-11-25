@@ -37,7 +37,7 @@ var httpsServer = https.createServer(credentials, app);
 app.use(cors({
   origin: '*', // Configure this to specific domains in production
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'x-api-key']
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-api-key', 'x-admin-token']
 }));
 
 // Rate limiting
