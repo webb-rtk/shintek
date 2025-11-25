@@ -15,6 +15,7 @@ const {
 const logger = require('../utils/logger.util');
 
 const LOG_DIR = path.join(__dirname, '..', 'logs');
+const CONFIG_FILE = path.join(__dirname, '..', 'data', 'line-config.json');
 
 // Serve login page
 router.get('/login', (req, res) => {
@@ -161,6 +162,67 @@ router.get('/api/logs/:filename/download', (req, res) => {
   }
 
   res.download(filePath, filename);
+});
+
+// Get LINE configuration
+router.get('/api/config', (req, res) => {
+  const token = req.headers['x-admin-token'];
+  if (!token || !validateSession(token)) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  try {
+    if (!fs.existsSync(CONFIG_FILE)) {
+      return res.status(404).json({ error: 'Configuration file not found' });
+    }
+
+    const configData = fs.readFileSync(CONFIG_FILE, 'utf8');
+    const config = JSON.parse(configData);
+
+    logger.info('Admin retrieved LINE configuration');
+    res.json({ config });
+  } catch (err) {
+    logger.error('Error reading configuration file', { error: err.message });
+    res.status(500).json({ error: 'Failed to read configuration file' });
+  }
+});
+
+// Update LINE configuration
+router.put('/api/config', (req, res) => {
+  const token = req.headers['x-admin-token'];
+  if (!token || !validateSession(token)) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  try {
+    const { config } = req.body;
+
+    if (!config) {
+      return res.status(400).json({ error: 'Configuration data is required' });
+    }
+
+    // Validate configuration structure
+    if (!config.systemPrompt || !config.systemPrompt.user || !config.systemPrompt.model) {
+      return res.status(400).json({ error: 'Invalid configuration structure: systemPrompt.user and systemPrompt.model are required' });
+    }
+
+    if (!config.geminiModel) {
+      return res.status(400).json({ error: 'Invalid configuration structure: geminiModel is required' });
+    }
+
+    if (!config.stickerReplyText) {
+      return res.status(400).json({ error: 'Invalid configuration structure: stickerReplyText is required' });
+    }
+
+    // Write configuration to file
+    fs.writeFileSync(CONFIG_FILE, JSON.stringify(config, null, 2), 'utf8');
+
+    logger.info('Admin updated LINE configuration');
+    res.json({ success: true, message: 'Configuration updated successfully' });
+  } catch (err) {
+    logger.error('Error updating configuration file', { error: err.message });
+    res.status(500).json({ error: 'Failed to update configuration file' });
+  }
 });
 
 module.exports = router;

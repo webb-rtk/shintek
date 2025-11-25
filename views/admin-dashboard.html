@@ -47,7 +47,7 @@
 
     .container {
       display: flex;
-      height: calc(100vh - 60px);
+      height: calc(100vh - 110px);
     }
 
     .sidebar {
@@ -260,15 +260,178 @@
       font-size: 12px;
       border-top: 1px solid #404040;
     }
+
+    .nav-tabs {
+      background: #fff;
+      border-bottom: 1px solid #e1e5eb;
+      padding: 0 24px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .tab-button {
+      background: none;
+      border: none;
+      padding: 12px 20px;
+      cursor: pointer;
+      color: #666;
+      border-bottom: 2px solid transparent;
+      transition: all 0.3s;
+    }
+
+    .tab-button:hover {
+      color: #333;
+    }
+
+    .tab-button.active {
+      color: #4a90d9;
+      border-bottom-color: #4a90d9;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: flex;
+    }
+
+    .config-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .config-editor {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+      background: #fff;
+    }
+
+    .config-section {
+      margin-bottom: 24px;
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid #e1e5eb;
+    }
+
+    .config-section h3 {
+      margin-bottom: 12px;
+      color: #333;
+      font-size: 16px;
+    }
+
+    .config-section label {
+      display: block;
+      margin-bottom: 8px;
+      color: #666;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .config-section input[type="text"],
+    .config-section textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+
+    .config-section textarea {
+      min-height: 150px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      resize: vertical;
+    }
+
+    .config-actions {
+      padding: 16px 24px;
+      background: #fff;
+      border-top: 1px solid #e1e5eb;
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+
+    .btn-save {
+      background: #28a745;
+      color: #fff;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .btn-save:hover {
+      background: #218838;
+    }
+
+    .btn-save:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .btn-reset {
+      background: #6c757d;
+      color: #fff;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .btn-reset:hover {
+      background: #5a6268;
+    }
+
+    .alert {
+      padding: 12px 16px;
+      border-radius: 6px;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    .alert.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+      display: block;
+    }
+
+    .alert.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+      display: block;
+    }
+
+    .help-text {
+      font-size: 12px;
+      color: #888;
+      margin-top: 4px;
+    }
   </style>
 </head>
 <body>
   <div class="header">
-    <h1>Admin Dashboard - Log Viewer</h1>
+    <h1>Admin Dashboard</h1>
     <button class="btn-logout" onclick="logout()">Logout</button>
   </div>
 
-  <div class="container">
+  <div class="nav-tabs">
+    <button class="tab-button active" onclick="switchTab('logs')">Log Viewer</button>
+    <button class="tab-button" onclick="switchTab('config')">LINE Configuration</button>
+  </div>
+
+  <div class="container tab-content active" id="logsTab">
     <div class="sidebar">
       <div class="sidebar-header">
         <h2>Log Files</h2>
@@ -302,6 +465,47 @@
 
       <div class="stats" id="stats" style="display: none;">
         <span id="statsText"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="container tab-content" id="configTab">
+    <div class="config-container">
+      <div class="config-editor">
+        <div id="configAlert" class="alert"></div>
+
+        <div class="config-section">
+          <h3>System Prompt - User</h3>
+          <label>User Prompt (Company Information)</label>
+          <textarea id="systemPromptUser" placeholder="Enter the user prompt..."></textarea>
+          <p class="help-text">This is the initial system prompt sent as a user message to set up the AI assistant's context.</p>
+        </div>
+
+        <div class="config-section">
+          <h3>System Prompt - Model</h3>
+          <label>Model Response</label>
+          <textarea id="systemPromptModel" placeholder="Enter the model response..."></textarea>
+          <p class="help-text">This is the AI's acknowledgment response to the system prompt.</p>
+        </div>
+
+        <div class="config-section">
+          <h3>Gemini Model</h3>
+          <label>Model Name</label>
+          <input type="text" id="geminiModel" placeholder="e.g., gemini-2.0-flash-exp">
+          <p class="help-text">The Gemini AI model to use for generating responses.</p>
+        </div>
+
+        <div class="config-section">
+          <h3>Sticker Reply</h3>
+          <label>Sticker Reply Text</label>
+          <input type="text" id="stickerReplyText" placeholder="Enter sticker reply text...">
+          <p class="help-text">The text to send when a user sends a sticker.</p>
+        </div>
+      </div>
+
+      <div class="config-actions">
+        <button class="btn-reset" onclick="loadConfig()">Reset</button>
+        <button class="btn-save" id="saveBtn" onclick="saveConfig()">Save Configuration</button>
       </div>
     </div>
   </div>
@@ -504,6 +708,127 @@
       const div = document.createElement('div');
       div.textContent = text;
       return div.innerHTML;
+    }
+
+    // Tab switching
+    function switchTab(tab) {
+      // Update tab buttons
+      document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      event.target.classList.add('active');
+
+      // Update tab content
+      document.getElementById('logsTab').classList.remove('active');
+      document.getElementById('configTab').classList.remove('active');
+
+      if (tab === 'logs') {
+        document.getElementById('logsTab').classList.add('active');
+      } else if (tab === 'config') {
+        document.getElementById('configTab').classList.add('active');
+        loadConfig();
+      }
+    }
+
+    // Load configuration
+    async function loadConfig() {
+      try {
+        const response = await fetch('/admin/api/config', {
+          headers: { 'x-admin-token': token }
+        });
+
+        if (!response.ok) {
+          if (response.status === 401) {
+            localStorage.removeItem('adminToken');
+            window.location.href = '/admin/login';
+          }
+          throw new Error('Failed to load configuration');
+        }
+
+        const data = await response.json();
+        const config = data.config;
+
+        // Populate form fields
+        document.getElementById('systemPromptUser').value = config.systemPrompt.user;
+        document.getElementById('systemPromptModel').value = config.systemPrompt.model;
+        document.getElementById('geminiModel').value = config.geminiModel;
+        document.getElementById('stickerReplyText').value = config.stickerReplyText;
+
+        hideAlert();
+      } catch (err) {
+        console.error('Failed to load configuration:', err);
+        showAlert('Failed to load configuration: ' + err.message, 'error');
+      }
+    }
+
+    // Save configuration
+    async function saveConfig() {
+      const saveBtn = document.getElementById('saveBtn');
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Saving...';
+
+      try {
+        const config = {
+          systemPrompt: {
+            user: document.getElementById('systemPromptUser').value,
+            model: document.getElementById('systemPromptModel').value
+          },
+          geminiModel: document.getElementById('geminiModel').value,
+          stickerReplyText: document.getElementById('stickerReplyText').value
+        };
+
+        // Validate fields
+        if (!config.systemPrompt.user || !config.systemPrompt.model || !config.geminiModel || !config.stickerReplyText) {
+          throw new Error('All fields are required');
+        }
+
+        const response = await fetch('/admin/api/config', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-admin-token': token
+          },
+          body: JSON.stringify({ config })
+        });
+
+        if (!response.ok) {
+          if (response.status === 401) {
+            localStorage.removeItem('adminToken');
+            window.location.href = '/admin/login';
+          }
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to save configuration');
+        }
+
+        const result = await response.json();
+        showAlert(result.message || 'Configuration saved successfully!', 'success');
+      } catch (err) {
+        console.error('Failed to save configuration:', err);
+        showAlert('Failed to save configuration: ' + err.message, 'error');
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Save Configuration';
+      }
+    }
+
+    // Show alert
+    function showAlert(message, type) {
+      const alert = document.getElementById('configAlert');
+      alert.textContent = message;
+      alert.className = 'alert ' + type;
+
+      if (type === 'success') {
+        setTimeout(() => {
+          hideAlert();
+        }, 5000);
+      }
+    }
+
+    // Hide alert
+    function hideAlert() {
+      const alert = document.getElementById('configAlert');
+      alert.className = 'alert';
+      alert.textContent = '';
     }
 
     // Initial load
