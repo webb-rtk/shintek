@@ -9,11 +9,13 @@ class SessionService {
 
   /**
    * Create a new session
+   * @param {string} roleId - The AI role ID for this session
    */
-  createSession() {
+  createSession(roleId = 'customer-service') {
     const sessionId = crypto.randomUUID();
     const session = {
       id: sessionId,
+      roleId: roleId,
       messages: [],
       createdAt: Date.now(),
       lastAccessedAt: Date.now()

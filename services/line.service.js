@@ -3,13 +3,7 @@ const lineConfig = require('../config/line.config');
 const logger = require('../utils/logger.util');
 const geminiService = require('./gemini.service');
 const sessionService = require('./session.service');
-const fs = require('fs');
-const path = require('path');
-
-// Load LINE configuration from JSON file
-const lineConfigData = JSON.parse(
-  fs.readFileSync(path.join(__dirname, '../data/line-config.json'), 'utf8')
-);
+const roleService = require('./role.service');
 
 const client = new Client(lineConfig);
 
@@ -23,12 +17,19 @@ async function handleEvent(event) {
       return Promise.resolve(null);
     }
 
+    const userId = event.source.userId;
+    const groupId = event.source.groupId || null;
+
+    // Get role configuration for this user/group
+    const roleConfig = roleService.getRoleForUser(userId, groupId);
+    logger.info(`Using role: ${roleConfig.roleId} (${roleConfig.name}) for user ${userId}`);
+
     // Handle sticker messages
     if (event.message.type === 'sticker') {
-      logger.info(`Received sticker from LINE user ${event.source.userId}`);
+      logger.info(`Received sticker from LINE user ${userId}`);
       const stickerReply = {
         type: 'text',
-        text: lineConfigData.stickerReplyText
+        text: roleConfig.stickerReplyText
       };
       return client.replyMessage(event.replyToken, stickerReply);
     }
@@ -40,24 +41,32 @@ async function handleEvent(event) {
     }
 
     const userMessage = event.message.text;
-    const userId = event.source.userId;
     logger.info(`Received message from LINE user ${userId}: ${userMessage}`);
 
     // Get or create session for this LINE user
     let sessionId = lineUserSessions.get(userId);
     if (!sessionId || !sessionService.getSession(sessionId)) {
-      sessionId = sessionService.createSession();
+      sessionId = sessionService.createSession(roleConfig.roleId);
       lineUserSessions.set(userId, sessionId);
-      logger.info(`Created new session ${sessionId} for LINE user ${userId}`);
+      logger.info(`Created new session ${sessionId} for LINE user ${userId} with role ${roleConfig.roleId}`);
+    }
+
+    // Get session and check if role has changed
+    const session = sessionService.getSession(sessionId);
+    if (session.roleId !== roleConfig.roleId) {
+      logger.info(`Role changed from ${session.roleId} to ${roleConfig.roleId} for user ${userId}, creating new session`);
+      // Role has changed, create a new session with the new role
+      sessionId = sessionService.createSession(roleConfig.roleId);
+      lineUserSessions.set(userId, sessionId);
     }
 
     // Get conversation history
     const messages = sessionService.getMessages(sessionId);
 
-    // Add system instruction for Traditional Chinese and company info if this is a new session
+    // Add system instruction if this is a new session
     if (messages.length === 0) {
-      sessionService.addMessage(sessionId, 'user', lineConfigData.systemPrompt.user);
-      sessionService.addMessage(sessionId, 'model', lineConfigData.systemPrompt.model);
+      sessionService.addMessage(sessionId, 'user', roleConfig.systemPrompt.user);
+      sessionService.addMessage(sessionId, 'model', roleConfig.systemPrompt.model);
     }
 
     // Add user message to session
@@ -69,7 +78,7 @@ async function handleEvent(event) {
     // Generate response using Gemini AI
     logger.info('Generating response with Gemini AI...');
     const geminiResponse = await geminiService.chat(updatedMessages, {
-      model: lineConfigData.geminiModel
+      model: roleConfig.geminiModel
     });
 
     // Update session with AI response

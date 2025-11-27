@@ -418,6 +418,340 @@
       color: #888;
       margin-top: 4px;
     }
+
+    /* Role Management Styles */
+    .roles-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .roles-header {
+      padding: 16px 24px;
+      background: #fff;
+      border-bottom: 1px solid #e1e5eb;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .roles-header h2 {
+      font-size: 18px;
+      color: #333;
+    }
+
+    .btn-primary {
+      background: #4a90d9;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .btn-primary:hover {
+      background: #357abd;
+    }
+
+    .roles-list {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+    }
+
+    .role-card {
+      background: #fff;
+      border: 1px solid #e1e5eb;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .role-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 12px;
+    }
+
+    .role-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .role-id {
+      font-size: 12px;
+      color: #888;
+      font-family: 'Consolas', monospace;
+      margin-top: 4px;
+    }
+
+    .role-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-edit, .btn-delete {
+      padding: 6px 12px;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .btn-edit {
+      background: #ffc107;
+      color: #000;
+    }
+
+    .btn-delete {
+      background: #dc3545;
+      color: #fff;
+    }
+
+    .role-description {
+      color: #666;
+      margin-bottom: 12px;
+    }
+
+    .role-details {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      padding: 12px;
+      background: #f8f9fa;
+      border-radius: 6px;
+    }
+
+    .role-detail-item {
+      font-size: 13px;
+    }
+
+    .role-detail-label {
+      font-weight: 600;
+      color: #666;
+    }
+
+    .role-detail-value {
+      color: #333;
+      margin-top: 4px;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      overflow-y: auto;
+    }
+
+    .modal.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: #fff;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      margin: 20px;
+    }
+
+    .modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid #e1e5eb;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h3 {
+      font-size: 18px;
+      color: #333;
+    }
+
+    .btn-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: #888;
+      cursor: pointer;
+      padding: 0;
+      width: 30px;
+      height: 30px;
+    }
+
+    .modal-body {
+      padding: 24px;
+    }
+
+    .modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid #e1e5eb;
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    .form-group input[type="text"],
+    .form-group textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 14px;
+    }
+
+    .form-group textarea {
+      min-height: 120px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      resize: vertical;
+    }
+
+    .btn-cancel {
+      background: #6c757d;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .btn-cancel:hover {
+      background: #5a6268;
+    }
+
+    /* Table Styles */
+    .table-container {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+    }
+
+    .data-table {
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      border: 1px solid #e1e5eb;
+      border-collapse: collapse;
+    }
+
+    .data-table th,
+    .data-table td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid #e1e5eb;
+    }
+
+    .data-table th {
+      background: #f8f9fa;
+      font-weight: 600;
+      color: #333;
+      font-size: 14px;
+    }
+
+    .data-table td {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .data-table tr:hover {
+      background: #f8f9fa;
+    }
+
+    .empty-table {
+      text-align: center;
+      padding: 40px;
+      color: #888;
+    }
+
+    .add-form {
+      background: #fff;
+      border: 1px solid #e1e5eb;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+
+    .add-form h3 {
+      margin-bottom: 16px;
+      color: #333;
+      font-size: 16px;
+    }
+
+    .form-inline {
+      display: flex;
+      gap: 12px;
+      align-items: end;
+    }
+
+    .form-inline .form-group {
+      flex: 1;
+      margin-bottom: 0;
+    }
+
+    .btn-add {
+      background: #28a745;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .btn-add:hover {
+      background: #218838;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .badge-primary {
+      background: #e3f2fd;
+      color: #1976d2;
+    }
+
+    .badge-default {
+      background: #28a745;
+      color: #fff;
+    }
   </style>
 </head>
 <body>
@@ -428,7 +762,10 @@
 
   <div class="nav-tabs">
     <button class="tab-button active" onclick="switchTab('logs')">Log Viewer</button>
-    <button class="tab-button" onclick="switchTab('config')">LINE Configuration</button>
+    <button class="tab-button" onclick="switchTab('roles')">AI Roles</button>
+    <button class="tab-button" onclick="switchTab('users')">User Assignments</button>
+    <button class="tab-button" onclick="switchTab('groups')">Group Assignments</button>
+    <button class="tab-button" onclick="switchTab('config')">Legacy Config</button>
   </div>
 
   <div class="container tab-content active" id="logsTab">
@@ -469,10 +806,107 @@
     </div>
   </div>
 
+  <!-- AI Roles Tab -->
+  <div class="container tab-content" id="rolesTab">
+    <div class="roles-container">
+      <div class="roles-header">
+        <h2>AI Roles Management</h2>
+        <button class="btn-primary" onclick="openRoleModal()">Create New Role</button>
+      </div>
+      <div class="roles-list" id="rolesList">
+        <div class="loading">Loading roles...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- User Assignments Tab -->
+  <div class="container tab-content" id="usersTab">
+    <div class="roles-container">
+      <div class="roles-header">
+        <h2>User Role Assignments</h2>
+      </div>
+      <div class="table-container">
+        <div class="add-form">
+          <h3>Assign Role to User</h3>
+          <div class="form-inline">
+            <div class="form-group">
+              <label>LINE User ID</label>
+              <input type="text" id="newUserId" placeholder="Enter LINE User ID">
+            </div>
+            <div class="form-group">
+              <label>Role</label>
+              <select id="newUserRole" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                <option value="">Select a role...</option>
+              </select>
+            </div>
+            <button class="btn-add" onclick="assignUserRole()">Assign</button>
+          </div>
+        </div>
+        <table class="data-table" id="userAssignmentsTable">
+          <thead>
+            <tr>
+              <th>LINE User ID</th>
+              <th>Assigned Role</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="userAssignmentsBody">
+            <tr><td colspan="3" class="empty-table">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Group Assignments Tab -->
+  <div class="container tab-content" id="groupsTab">
+    <div class="roles-container">
+      <div class="roles-header">
+        <h2>Group Role Assignments</h2>
+      </div>
+      <div class="table-container">
+        <div class="add-form">
+          <h3>Assign Role to Group</h3>
+          <div class="form-inline">
+            <div class="form-group">
+              <label>LINE Group ID</label>
+              <input type="text" id="newGroupId" placeholder="Enter LINE Group ID">
+            </div>
+            <div class="form-group">
+              <label>Role</label>
+              <select id="newGroupRole" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                <option value="">Select a role...</option>
+              </select>
+            </div>
+            <button class="btn-add" onclick="assignGroupRole()">Assign</button>
+          </div>
+        </div>
+        <table class="data-table" id="groupAssignmentsTable">
+          <thead>
+            <tr>
+              <th>LINE Group ID</th>
+              <th>Assigned Role</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="groupAssignmentsBody">
+            <tr><td colspan="3" class="empty-table">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Legacy Config Tab -->
   <div class="container tab-content" id="configTab">
     <div class="config-container">
       <div class="config-editor">
         <div id="configAlert" class="alert"></div>
+
+        <p style="padding: 16px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; margin-bottom: 20px;">
+          <strong>Legacy Mode:</strong> This configuration editor is for backward compatibility only.
+          For multi-role support, please use the "AI Roles" tab.
+        </p>
 
         <div class="config-section">
           <h3>System Prompt - User</h3>
@@ -506,6 +940,51 @@
       <div class="config-actions">
         <button class="btn-reset" onclick="loadConfig()">Reset</button>
         <button class="btn-save" id="saveBtn" onclick="saveConfig()">Save Configuration</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Role Modal -->
+  <div class="modal" id="roleModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="roleModalTitle">Create New Role</h3>
+        <button class="btn-close" onclick="closeRoleModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Role ID *</label>
+          <input type="text" id="modalRoleId" placeholder="e.g., sales-assistant">
+          <p class="help-text">Unique identifier (lowercase, hyphens only)</p>
+        </div>
+        <div class="form-group">
+          <label>Role Name *</label>
+          <input type="text" id="modalRoleName" placeholder="e.g., Sales Assistant">
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <input type="text" id="modalRoleDescription" placeholder="Brief description of this role">
+        </div>
+        <div class="form-group">
+          <label>System Prompt - User *</label>
+          <textarea id="modalSystemPromptUser" placeholder="Enter the system prompt..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>System Prompt - Model *</label>
+          <textarea id="modalSystemPromptModel" placeholder="Enter the AI's acknowledgment..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Gemini Model *</label>
+          <input type="text" id="modalGeminiModel" placeholder="e.g., gemini-2.0-flash-exp">
+        </div>
+        <div class="form-group">
+          <label>Sticker Reply Text *</label>
+          <input type="text" id="modalStickerReplyText" placeholder="Reply when user sends a sticker">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeRoleModal()">Cancel</button>
+        <button class="btn-primary" id="saveRoleBtn" onclick="saveRole()">Save Role</button>
       </div>
     </div>
   </div>
@@ -719,11 +1198,23 @@
       event.target.classList.add('active');
 
       // Update tab content
-      document.getElementById('logsTab').classList.remove('active');
-      document.getElementById('configTab').classList.remove('active');
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+      });
 
       if (tab === 'logs') {
         document.getElementById('logsTab').classList.add('active');
+      } else if (tab === 'roles') {
+        document.getElementById('rolesTab').classList.add('active');
+        loadRoles();
+      } else if (tab === 'users') {
+        document.getElementById('usersTab').classList.add('active');
+        loadUserAssignments();
+        loadRoleOptions();
+      } else if (tab === 'groups') {
+        document.getElementById('groupsTab').classList.add('active');
+        loadGroupAssignments();
+        loadRoleOptions();
       } else if (tab === 'config') {
         document.getElementById('configTab').classList.add('active');
         loadConfig();
@@ -839,6 +1330,444 @@
       const alert = document.getElementById('configAlert');
       alert.className = 'alert';
       alert.textContent = '';
+    }
+
+    // ==================== Role Management Functions ====================
+    let currentEditingRoleId = null;
+    let allRoles = [];
+
+    async function loadRoles() {
+      try {
+        const response = await fetch('/admin/api/roles', {
+          headers: { 'x-admin-token': token }
+        });
+
+        if (!response.ok) {
+          if (response.status === 401) {
+            localStorage.removeItem('adminToken');
+            window.location.href = '/admin/login';
+          }
+          throw new Error('Failed to load roles');
+        }
+
+        const data = await response.json();
+        allRoles = data.roles;
+        renderRoles(data.roles);
+      } catch (err) {
+        console.error('Failed to load roles:', err);
+        document.getElementById('rolesList').innerHTML = '<div class="loading">Failed to load roles</div>';
+      }
+    }
+
+    function renderRoles(roles) {
+      const rolesList = document.getElementById('rolesList');
+
+      if (roles.length === 0) {
+        rolesList.innerHTML = '<div class="empty-state"><p>No roles found. Create your first role!</p></div>';
+        return;
+      }
+
+      // Get default role
+      fetch('/admin/api/default-role', {
+        headers: { 'x-admin-token': token }
+      })
+      .then(res => res.json())
+      .then(data => {
+        const defaultRole = data.defaultRole;
+
+        rolesList.innerHTML = roles.map(role => `
+          <div class="role-card">
+            <div class="role-card-header">
+              <div>
+                <div class="role-title">
+                  ${escapeHtml(role.name)}
+                  ${role.roleId === defaultRole ? '<span class="badge badge-default">Default</span>' : ''}
+                </div>
+                <div class="role-id">ID: ${escapeHtml(role.roleId)}</div>
+              </div>
+              <div class="role-actions">
+                <button class="btn-edit" onclick="editRole('${escapeHtml(role.roleId)}')">Edit</button>
+                <button class="btn-delete" onclick="deleteRole('${escapeHtml(role.roleId)}')" ${role.roleId === defaultRole ? 'disabled' : ''}>Delete</button>
+              </div>
+            </div>
+            ${role.description ? `<div class="role-description">${escapeHtml(role.description)}</div>` : ''}
+            <div class="role-details">
+              <div class="role-detail-item">
+                <div class="role-detail-label">Model</div>
+                <div class="role-detail-value">${escapeHtml(role.geminiModel)}</div>
+              </div>
+              <div class="role-detail-item">
+                <div class="role-detail-label">Sticker Reply</div>
+                <div class="role-detail-value">${escapeHtml(role.stickerReplyText)}</div>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      });
+    }
+
+    function openRoleModal(roleId = null) {
+      currentEditingRoleId = roleId;
+      const modal = document.getElementById('roleModal');
+
+      if (roleId) {
+        // Edit mode
+        const role = allRoles.find(r => r.roleId === roleId);
+        if (!role) return;
+
+        document.getElementById('roleModalTitle').textContent = 'Edit Role';
+        document.getElementById('modalRoleId').value = role.roleId;
+        document.getElementById('modalRoleId').disabled = true;
+        document.getElementById('modalRoleName').value = role.name;
+        document.getElementById('modalRoleDescription').value = role.description || '';
+        document.getElementById('modalSystemPromptUser').value = role.systemPrompt.user;
+        document.getElementById('modalSystemPromptModel').value = role.systemPrompt.model;
+        document.getElementById('modalGeminiModel').value = role.geminiModel;
+        document.getElementById('modalStickerReplyText').value = role.stickerReplyText;
+      } else {
+        // Create mode
+        document.getElementById('roleModalTitle').textContent = 'Create New Role';
+        document.getElementById('modalRoleId').disabled = false;
+        document.getElementById('modalRoleId').value = '';
+        document.getElementById('modalRoleName').value = '';
+        document.getElementById('modalRoleDescription').value = '';
+        document.getElementById('modalSystemPromptUser').value = '';
+        document.getElementById('modalSystemPromptModel').value = '';
+        document.getElementById('modalGeminiModel').value = 'gemini-2.0-flash-exp';
+        document.getElementById('modalStickerReplyText').value = '';
+      }
+
+      modal.classList.add('active');
+    }
+
+    function closeRoleModal() {
+      document.getElementById('roleModal').classList.remove('active');
+      currentEditingRoleId = null;
+    }
+
+    async function saveRole() {
+      const roleId = document.getElementById('modalRoleId').value.trim();
+      const roleName = document.getElementById('modalRoleName').value.trim();
+      const description = document.getElementById('modalRoleDescription').value.trim();
+      const systemPromptUser = document.getElementById('modalSystemPromptUser').value.trim();
+      const systemPromptModel = document.getElementById('modalSystemPromptModel').value.trim();
+      const geminiModel = document.getElementById('modalGeminiModel').value.trim();
+      const stickerReplyText = document.getElementById('modalStickerReplyText').value.trim();
+
+      // Validate
+      if (!roleId || !roleName || !systemPromptUser || !systemPromptModel || !geminiModel || !stickerReplyText) {
+        alert('Please fill in all required fields (*)');
+        return;
+      }
+
+      const saveBtn = document.getElementById('saveRoleBtn');
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Saving...';
+
+      try {
+        const roleConfig = {
+          name: roleName,
+          description: description,
+          systemPrompt: {
+            user: systemPromptUser,
+            model: systemPromptModel
+          },
+          geminiModel: geminiModel,
+          stickerReplyText: stickerReplyText
+        };
+
+        let response;
+        if (currentEditingRoleId) {
+          // Update existing role
+          response = await fetch(`/admin/api/roles/${roleId}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-admin-token': token
+            },
+            body: JSON.stringify({ roleConfig })
+          });
+        } else {
+          // Create new role
+          response = await fetch('/admin/api/roles', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-admin-token': token
+            },
+            body: JSON.stringify({ roleId, roleConfig })
+          });
+        }
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to save role');
+        }
+
+        closeRoleModal();
+        loadRoles();
+        alert(currentEditingRoleId ? 'Role updated successfully!' : 'Role created successfully!');
+      } catch (err) {
+        console.error('Failed to save role:', err);
+        alert('Failed to save role: ' + err.message);
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Save Role';
+      }
+    }
+
+    function editRole(roleId) {
+      openRoleModal(roleId);
+    }
+
+    async function deleteRole(roleId) {
+      if (!confirm(`Are you sure you want to delete the role "${roleId}"? This will also remove all user and group assignments for this role.`)) {
+        return;
+      }
+
+      try {
+        const response = await fetch(`/admin/api/roles/${roleId}`, {
+          method: 'DELETE',
+          headers: { 'x-admin-token': token }
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to delete role');
+        }
+
+        loadRoles();
+        alert('Role deleted successfully!');
+      } catch (err) {
+        console.error('Failed to delete role:', err);
+        alert('Failed to delete role: ' + err.message);
+      }
+    }
+
+    // ==================== User Assignment Functions ====================
+
+    async function loadUserAssignments() {
+      try {
+        const response = await fetch('/admin/api/user-roles', {
+          headers: { 'x-admin-token': token }
+        });
+
+        if (!response.ok) {
+          if (response.status === 401) {
+            localStorage.removeItem('adminToken');
+            window.location.href = '/admin/login';
+          }
+          throw new Error('Failed to load user assignments');
+        }
+
+        const data = await response.json();
+        renderUserAssignments(data.mappings);
+      } catch (err) {
+        console.error('Failed to load user assignments:', err);
+        document.getElementById('userAssignmentsBody').innerHTML = '<tr><td colspan="3" class="empty-table">Failed to load assignments</td></tr>';
+      }
+    }
+
+    function renderUserAssignments(mappings) {
+      const tbody = document.getElementById('userAssignmentsBody');
+
+      if (Object.keys(mappings).length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" class="empty-table">No user assignments yet</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = Object.entries(mappings).map(([userId, roleId]) => `
+        <tr>
+          <td><code>${escapeHtml(userId)}</code></td>
+          <td><span class="badge badge-primary">${escapeHtml(roleId)}</span></td>
+          <td>
+            <button class="btn-delete" onclick="removeUserAssignment('${escapeHtml(userId)}')">Remove</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function assignUserRole() {
+      const userId = document.getElementById('newUserId').value.trim();
+      const roleId = document.getElementById('newUserRole').value;
+
+      if (!userId || !roleId) {
+        alert('Please enter a user ID and select a role');
+        return;
+      }
+
+      try {
+        const response = await fetch('/admin/api/user-roles', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-admin-token': token
+          },
+          body: JSON.stringify({ userId, roleId })
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to assign role');
+        }
+
+        document.getElementById('newUserId').value = '';
+        document.getElementById('newUserRole').value = '';
+        loadUserAssignments();
+        alert('User role assigned successfully!');
+      } catch (err) {
+        console.error('Failed to assign user role:', err);
+        alert('Failed to assign role: ' + err.message);
+      }
+    }
+
+    async function removeUserAssignment(userId) {
+      if (!confirm(`Remove role assignment for user ${userId}?`)) {
+        return;
+      }
+
+      try {
+        const response = await fetch(`/admin/api/user-roles/${encodeURIComponent(userId)}`, {
+          method: 'DELETE',
+          headers: { 'x-admin-token': token }
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to remove assignment');
+        }
+
+        loadUserAssignments();
+        alert('User assignment removed successfully!');
+      } catch (err) {
+        console.error('Failed to remove user assignment:', err);
+        alert('Failed to remove assignment: ' + err.message);
+      }
+    }
+
+    // ==================== Group Assignment Functions ====================
+
+    async function loadGroupAssignments() {
+      try {
+        const response = await fetch('/admin/api/group-roles', {
+          headers: { 'x-admin-token': token }
+        });
+
+        if (!response.ok) {
+          if (response.status === 401) {
+            localStorage.removeItem('adminToken');
+            window.location.href = '/admin/login';
+          }
+          throw new Error('Failed to load group assignments');
+        }
+
+        const data = await response.json();
+        renderGroupAssignments(data.mappings);
+      } catch (err) {
+        console.error('Failed to load group assignments:', err);
+        document.getElementById('groupAssignmentsBody').innerHTML = '<tr><td colspan="3" class="empty-table">Failed to load assignments</td></tr>';
+      }
+    }
+
+    function renderGroupAssignments(mappings) {
+      const tbody = document.getElementById('groupAssignmentsBody');
+
+      if (Object.keys(mappings).length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" class="empty-table">No group assignments yet</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = Object.entries(mappings).map(([groupId, roleId]) => `
+        <tr>
+          <td><code>${escapeHtml(groupId)}</code></td>
+          <td><span class="badge badge-primary">${escapeHtml(roleId)}</span></td>
+          <td>
+            <button class="btn-delete" onclick="removeGroupAssignment('${escapeHtml(groupId)}')">Remove</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function assignGroupRole() {
+      const groupId = document.getElementById('newGroupId').value.trim();
+      const roleId = document.getElementById('newGroupRole').value;
+
+      if (!groupId || !roleId) {
+        alert('Please enter a group ID and select a role');
+        return;
+      }
+
+      try {
+        const response = await fetch('/admin/api/group-roles', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-admin-token': token
+          },
+          body: JSON.stringify({ groupId, roleId })
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to assign role');
+        }
+
+        document.getElementById('newGroupId').value = '';
+        document.getElementById('newGroupRole').value = '';
+        loadGroupAssignments();
+        alert('Group role assigned successfully!');
+      } catch (err) {
+        console.error('Failed to assign group role:', err);
+        alert('Failed to assign role: ' + err.message);
+      }
+    }
+
+    async function removeGroupAssignment(groupId) {
+      if (!confirm(`Remove role assignment for group ${groupId}?`)) {
+        return;
+      }
+
+      try {
+        const response = await fetch(`/admin/api/group-roles/${encodeURIComponent(groupId)}`, {
+          method: 'DELETE',
+          headers: { 'x-admin-token': token }
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to remove assignment');
+        }
+
+        loadGroupAssignments();
+        alert('Group assignment removed successfully!');
+      } catch (err) {
+        console.error('Failed to remove group assignment:', err);
+        alert('Failed to remove assignment: ' + err.message);
+      }
+    }
+
+    // ==================== Utility Functions ====================
+
+    async function loadRoleOptions() {
+      try {
+        const response = await fetch('/admin/api/roles', {
+          headers: { 'x-admin-token': token }
+        });
+
+        if (!response.ok) throw new Error('Failed to load roles');
+
+        const data = await response.json();
+        const userSelect = document.getElementById('newUserRole');
+        const groupSelect = document.getElementById('newGroupRole');
+
+        const options = '<option value="">Select a role...</option>' +
+          data.roles.map(role => `<option value="${escapeHtml(role.roleId)}">${escapeHtml(role.name)}</option>`).join('');
+
+        userSelect.innerHTML = options;
+        groupSelect.innerHTML = options;
+      } catch (err) {
+        console.error('Failed to load role options:', err);
+      }
     }
 
     // Initial load

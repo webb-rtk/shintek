@@ -13,6 +13,7 @@ const {
   destroySession
 } = require('../middleware/admin.middleware');
 const logger = require('../utils/logger.util');
+const roleService = require('../services/role.service');
 
 const LOG_DIR = path.join(__dirname, '..', 'logs');
 const CONFIG_FILE = path.join(__dirname, '..', 'data', 'line-config.json');
@@ -207,17 +208,44 @@ router.put('/api/config', (req, res) => {
       return res.status(400).json({ error: 'Configuration data is required' });
     }
 
-    // Validate configuration structure
-    if (!config.systemPrompt || !config.systemPrompt.user || !config.systemPrompt.model) {
-      return res.status(400).json({ error: 'Invalid configuration structure: systemPrompt.user and systemPrompt.model are required' });
-    }
+    // Validate configuration structure for multi-role format
+    if (config.roles) {
+      // New multi-role format
+      if (!config.roles || typeof config.roles !== 'object') {
+        return res.status(400).json({ error: 'Invalid configuration structure: roles must be an object' });
+      }
 
-    if (!config.geminiModel) {
-      return res.status(400).json({ error: 'Invalid configuration structure: geminiModel is required' });
-    }
+      if (!config.defaultRole) {
+        return res.status(400).json({ error: 'Invalid configuration structure: defaultRole is required' });
+      }
 
-    if (!config.stickerReplyText) {
-      return res.status(400).json({ error: 'Invalid configuration structure: stickerReplyText is required' });
+      // Validate each role
+      for (const [roleId, roleConfig] of Object.entries(config.roles)) {
+        if (!roleConfig.systemPrompt || !roleConfig.systemPrompt.user || !roleConfig.systemPrompt.model) {
+          return res.status(400).json({ error: `Invalid role ${roleId}: systemPrompt.user and systemPrompt.model are required` });
+        }
+
+        if (!roleConfig.geminiModel) {
+          return res.status(400).json({ error: `Invalid role ${roleId}: geminiModel is required` });
+        }
+
+        if (!roleConfig.stickerReplyText) {
+          return res.status(400).json({ error: `Invalid role ${roleId}: stickerReplyText is required` });
+        }
+      }
+    } else {
+      // Legacy single-role format (backward compatibility)
+      if (!config.systemPrompt || !config.systemPrompt.user || !config.systemPrompt.model) {
+        return res.status(400).json({ error: 'Invalid configuration structure: systemPrompt.user and systemPrompt.model are required' });
+      }
+
+      if (!config.geminiModel) {
+        return res.status(400).json({ error: 'Invalid configuration structure: geminiModel is required' });
+      }
+
+      if (!config.stickerReplyText) {
+        return res.status(400).json({ error: 'Invalid configuration structure: stickerReplyText is required' });
+      }
     }
 
     // Write configuration to file
@@ -228,6 +256,372 @@ router.put('/api/config', (req, res) => {
   } catch (err) {
     logger.error('Error updating configuration file', { error: err.message });
     res.status(500).json({ error: 'Failed to update configuration file' });
+  }
+});
+
+// ==================== Role Management API ====================
+
+// Get all roles
+router.get('/api/roles', (req, res) => {
+  const token = req.headers['x-admin-token'];
+  if (!token || !validateSession(token)) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  try {
+    const roles = roleService.listRoles();
+    logger.info('Admin retrieved roles list');
+    res.json({ roles });
+  } catch (err) {
+    logger.error('Error retrieving roles', { error: err.message });
+    res.status(500).json({ error: 'Failed to retrieve roles' });
+  }
+});
+
+// Get a specific role
+router.get('/api/roles/:roleId', (req, res) => {
+  const token = req.headers['x-admin-token'];
+  if (!token || !validateSession(token)) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  try {
+    const { roleId } = req.params;
+
+    if (!roleService.roleExists(roleId)) {
+      return res.status(404).json({ error: 'Role not found' });
+    }
+
+    const role = roleService.getRoleConfig(roleId);
+    logger.info('Admin retrieved role', { roleId });
+    res.json({ role });
+  } catch (err) {
+    logger.error('Error retrieving role', { error: err.message });
+    res.status(500).json({ error: 'Failed to retrieve role' });
+  }
+});
+
+// Create a new role
+router.post('/api/roles', (req, res) => {
+  const token = req.headers['x-admin-token'];
+  if (!token || !validateSession(token)) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  try {
+    const { roleId, roleConfig } = req.body;
+
+    if (!roleId || !roleConfig) {
+      return res.status(400).json({ error: 'roleId and roleConfig are required' });
+    }
+
+    // Validate role configuration
+    if (!roleConfig.name) {
+      return res.status(400).json({ error: 'Role name is required' });
+    }
+
+    if (!roleConfig.systemPrompt || !roleConfig.systemPrompt.user || !roleConfig.systemPrompt.model) {
+      return res.status(400).json({ error: 'systemPrompt.user and systemPrompt.model are required' });
+    }
+
+    if (!roleConfig.geminiModel) {
+      return res.status(400).json({ error: 'geminiModel is required' });
+    }
+
+    if (!roleConfig.stickerReplyText) {
+      return res.status(400).json({ error: 'stickerReplyText is required' });
+    }
+
+    if (roleService.roleExists(roleId)) {
+      return res.status(409).json({ error: 'Role already exists' });
+    }
+
+    const success = roleService.createRole(roleId, roleConfig);
+
+    if (success) {
+      logger.info('Admin created new role', { roleId });
+      res.json({ success: true, message: 'Role created successfully' });
+    } else {
+      res.status(500).json({ error: 'Failed to create role' });
+    }
+  } catch (err) {
+    logger.error('Error creating role', { error: err.message });
+    res.status(500).json({ error: 'Failed to create role' });
+  }
+});
+
+// Update an existing role
+router.put('/api/roles/:roleId', (req, res) => {
+  const token = req.headers['x-admin-token'];
+  if (!token || !validateSession(token)) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  try {
+    const { roleId } = req.params;
+    const { roleConfig } = req.body;
+
+    if (!roleConfig) {
+      return res.status(400).json({ error: 'roleConfig is required' });
+    }
+
+    if (!roleService.roleExists(roleId)) {
+      return res.status(404).json({ error: 'Role not found' });
+    }
+
+    // Validate role configuration
+    if (!roleConfig.name) {
+      return res.status(400).json({ error: 'Role name is required' });
+    }
+
+    if (!roleConfig.systemPrompt || !roleConfig.systemPrompt.user || !roleConfig.systemPrompt.model) {
+      return res.status(400).json({ error: 'systemPrompt.user and systemPrompt.model are required' });
+    }
+
+    if (!roleConfig.geminiModel) {
+      return res.status(400).json({ error: 'geminiModel is required' });
+    }
+
+    if (!roleConfig.stickerReplyText) {
+      return res.status(400).json({ error: 'stickerReplyText is required' });
+    }
+
+    const success = roleService.updateRole(roleId, roleConfig);
+
+    if (success) {
+      logger.info('Admin updated role', { roleId });
+      res.json({ success: true, message: 'Role updated successfully' });
+    } else {
+      res.status(500).json({ error: 'Failed to update role' });
+    }
+  } catch (err) {
+    logger.error('Error updating role', { error: err.message });
+    res.status(500).json({ error: 'Failed to update role' });
+  }
+});
+
+// Delete a role
+router.delete('/api/roles/:roleId', (req, res) => {
+  const token = req.headers['x-admin-token'];
+  if (!token || !validateSession(token)) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  try {
+    const { roleId } = req.params;
+
+    if (!roleService.roleExists(roleId)) {
+      return res.status(404).json({ error: 'Role not found' });
+    }
+
+    const success = roleService.deleteRole(roleId);
+
+    if (success) {
+      logger.info('Admin deleted role', { roleId });
+      res.json({ success: true, message: 'Role deleted successfully' });
+    } else {
+      res.status(500).json({ error: 'Failed to delete role (cannot delete default role)' });
+    }
+  } catch (err) {
+    logger.error('Error deleting role', { error: err.message });
+    res.status(500).json({ error: 'Failed to delete role' });
+  }
+});
+
+// ==================== User/Group Role Mapping API ====================
+
+// Get all user role mappings
+router.get('/api/user-roles', (req, res) => {
+  const token = req.headers['x-admin-token'];
+  if (!token || !validateSession(token)) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  try {
+    const mappings = roleService.getUserRoleMappings();
+    logger.info('Admin retrieved user role mappings');
+    res.json({ mappings });
+  } catch (err) {
+    logger.error('Error retrieving user role mappings', { error: err.message });
+    res.status(500).json({ error: 'Failed to retrieve user role mappings' });
+  }
+});
+
+// Assign role to user
+router.post('/api/user-roles', (req, res) => {
+  const token = req.headers['x-admin-token'];
+  if (!token || !validateSession(token)) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  try {
+    const { userId, roleId } = req.body;
+
+    if (!userId || !roleId) {
+      return res.status(400).json({ error: 'userId and roleId are required' });
+    }
+
+    if (!roleService.roleExists(roleId)) {
+      return res.status(404).json({ error: 'Role not found' });
+    }
+
+    const success = roleService.setUserRole(userId, roleId);
+
+    if (success) {
+      logger.info('Admin assigned role to user', { userId, roleId });
+      res.json({ success: true, message: 'User role assigned successfully' });
+    } else {
+      res.status(500).json({ error: 'Failed to assign user role' });
+    }
+  } catch (err) {
+    logger.error('Error assigning user role', { error: err.message });
+    res.status(500).json({ error: 'Failed to assign user role' });
+  }
+});
+
+// Remove user role assignment
+router.delete('/api/user-roles/:userId', (req, res) => {
+  const token = req.headers['x-admin-token'];
+  if (!token || !validateSession(token)) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  try {
+    const { userId } = req.params;
+
+    const success = roleService.removeUserRole(userId);
+
+    if (success) {
+      logger.info('Admin removed user role assignment', { userId });
+      res.json({ success: true, message: 'User role assignment removed successfully' });
+    } else {
+      res.status(404).json({ error: 'User role assignment not found' });
+    }
+  } catch (err) {
+    logger.error('Error removing user role assignment', { error: err.message });
+    res.status(500).json({ error: 'Failed to remove user role assignment' });
+  }
+});
+
+// Get all group role mappings
+router.get('/api/group-roles', (req, res) => {
+  const token = req.headers['x-admin-token'];
+  if (!token || !validateSession(token)) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  try {
+    const mappings = roleService.getGroupRoleMappings();
+    logger.info('Admin retrieved group role mappings');
+    res.json({ mappings });
+  } catch (err) {
+    logger.error('Error retrieving group role mappings', { error: err.message });
+    res.status(500).json({ error: 'Failed to retrieve group role mappings' });
+  }
+});
+
+// Assign role to group
+router.post('/api/group-roles', (req, res) => {
+  const token = req.headers['x-admin-token'];
+  if (!token || !validateSession(token)) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  try {
+    const { groupId, roleId } = req.body;
+
+    if (!groupId || !roleId) {
+      return res.status(400).json({ error: 'groupId and roleId are required' });
+    }
+
+    if (!roleService.roleExists(roleId)) {
+      return res.status(404).json({ error: 'Role not found' });
+    }
+
+    const success = roleService.setGroupRole(groupId, roleId);
+
+    if (success) {
+      logger.info('Admin assigned role to group', { groupId, roleId });
+      res.json({ success: true, message: 'Group role assigned successfully' });
+    } else {
+      res.status(500).json({ error: 'Failed to assign group role' });
+    }
+  } catch (err) {
+    logger.error('Error assigning group role', { error: err.message });
+    res.status(500).json({ error: 'Failed to assign group role' });
+  }
+});
+
+// Remove group role assignment
+router.delete('/api/group-roles/:groupId', (req, res) => {
+  const token = req.headers['x-admin-token'];
+  if (!token || !validateSession(token)) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  try {
+    const { groupId } = req.params;
+
+    const success = roleService.removeGroupRole(groupId);
+
+    if (success) {
+      logger.info('Admin removed group role assignment', { groupId });
+      res.json({ success: true, message: 'Group role assignment removed successfully' });
+    } else {
+      res.status(404).json({ error: 'Group role assignment not found' });
+    }
+  } catch (err) {
+    logger.error('Error removing group role assignment', { error: err.message });
+    res.status(500).json({ error: 'Failed to remove group role assignment' });
+  }
+});
+
+// Get default role
+router.get('/api/default-role', (req, res) => {
+  const token = req.headers['x-admin-token'];
+  if (!token || !validateSession(token)) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  try {
+    const defaultRole = roleService.getDefaultRole();
+    logger.info('Admin retrieved default role');
+    res.json({ defaultRole });
+  } catch (err) {
+    logger.error('Error retrieving default role', { error: err.message });
+    res.status(500).json({ error: 'Failed to retrieve default role' });
+  }
+});
+
+// Set default role
+router.put('/api/default-role', (req, res) => {
+  const token = req.headers['x-admin-token'];
+  if (!token || !validateSession(token)) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  try {
+    const { roleId } = req.body;
+
+    if (!roleId) {
+      return res.status(400).json({ error: 'roleId is required' });
+    }
+
+    if (!roleService.roleExists(roleId)) {
+      return res.status(404).json({ error: 'Role not found' });
+    }
+
+    const success = roleService.setDefaultRole(roleId);
+
+    if (success) {
+      logger.info('Admin set default role', { roleId });
+      res.json({ success: true, message: 'Default role set successfully' });
+    } else {
+      res.status(500).json({ error: 'Failed to set default role' });
+    }
+  } catch (err) {
+    logger.error('Error setting default role', { error: err.message });
+    res.status(500).json({ error: 'Failed to set default role' });
   }
 });
 
