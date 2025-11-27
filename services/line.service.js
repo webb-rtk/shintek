@@ -10,7 +10,7 @@ const client = new Client(lineConfig);
 // Store LINE user sessions (maps LINE userId to sessionId)
 const lineUserSessions = new Map();
 
-async function handleEvent(event) {
+async function handleEvent(event, destination = null) {
   try {
     if (event.type !== 'message') {
       // Ignore non-message events
@@ -20,13 +20,21 @@ async function handleEvent(event) {
     const userId = event.source.userId;
     const groupId = event.source.groupId || null;
 
-    // Log incoming message with source information
+    // Log incoming message with complete source information
     const sourceType = groupId ? 'GROUP' : 'DIRECT';
-    logger.info(`[${sourceType}] Message received - User ID: ${userId}${groupId ? `, Group ID: ${groupId}` : ''}`);
+    const logParts = [
+      `[${sourceType}]`,
+      `Bot: ${destination || 'N/A'}`,
+      `User: ${userId}`
+    ];
+    if (groupId) {
+      logParts.push(`Group: ${groupId}`);
+    }
+    logger.info(`📩 ${logParts.join(' | ')}`);
 
     // Get role configuration for this user/group
     const roleConfig = roleService.getRoleForUser(userId, groupId);
-    logger.info(`Using role: ${roleConfig.roleId} (${roleConfig.name}) for user ${userId}`);
+    logger.info(`🤖 Using role: ${roleConfig.roleId} (${roleConfig.name})`);
 
     // Handle sticker messages
     if (event.message.type === 'sticker') {
@@ -50,6 +58,9 @@ async function handleEvent(event) {
     // Special command: /showid - Display User ID and Group ID
     if (userMessage.trim() === '/showid') {
       let idInfo = `📋 LINE IDs Information\n\n`;
+      if (destination) {
+        idInfo += `🤖 Bot ID (Destination):\n${destination}\n\n`;
+      }
       idInfo += `👤 User ID:\n${userId}\n`;
       if (groupId) {
         idInfo += `\n👥 Group ID:\n${groupId}`;

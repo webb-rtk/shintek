@@ -22,11 +22,18 @@ try {
 // Webhook endpoint - WITHOUT middleware for testing
 router.post('/webhook-test', async (req, res) => {
   try {
-    logger.info('Webhook-test received:', JSON.stringify(req.body));
+    const destination = req.body.destination;
+    const events = req.body.events || [];
+
+    logger.info(`📨 Webhook-test received - Bot ID: ${destination || 'N/A'}, Events: ${events.length}`);
+    logger.info('Full payload:', JSON.stringify(req.body));
     logger.info('Headers:', JSON.stringify(req.headers));
+
     res.status(200).json({
       success: true,
       message: 'Webhook test received',
+      destination: destination,
+      eventsCount: events.length,
       body: req.body
     });
   } catch (err) {
@@ -58,11 +65,13 @@ router.post('/webhook', async (req, res) => {
         }
 
         try {
+          const destination = req.body.destination;
           const events = req.body.events || [];
-          logger.info(`Processing ${events.length} events`);
 
-          // Process all events in parallel
-          await Promise.all(events.map(handleEvent));
+          logger.info(`📨 Webhook received - Bot ID: ${destination}, Events: ${events.length}`);
+
+          // Process all events in parallel, passing destination to each
+          await Promise.all(events.map(event => handleEvent(event, destination)));
 
           logger.info('LINE webhook events processed successfully');
           res.status(200).end();
