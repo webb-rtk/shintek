@@ -20,6 +20,10 @@ async function handleEvent(event) {
     const userId = event.source.userId;
     const groupId = event.source.groupId || null;
 
+    // Log incoming message with source information
+    const sourceType = groupId ? 'GROUP' : 'DIRECT';
+    logger.info(`[${sourceType}] Message received - User ID: ${userId}${groupId ? `, Group ID: ${groupId}` : ''}`);
+
     // Get role configuration for this user/group
     const roleConfig = roleService.getRoleForUser(userId, groupId);
     logger.info(`Using role: ${roleConfig.roleId} (${roleConfig.name}) for user ${userId}`);
@@ -41,7 +45,27 @@ async function handleEvent(event) {
     }
 
     const userMessage = event.message.text;
-    logger.info(`Received message from LINE user ${userId}: ${userMessage}`);
+    logger.info(`Message content: ${userMessage}`);
+
+    // Special command: /showid - Display User ID and Group ID
+    if (userMessage.trim() === '/showid') {
+      let idInfo = `📋 LINE IDs Information\n\n`;
+      idInfo += `👤 User ID:\n${userId}\n`;
+      if (groupId) {
+        idInfo += `\n👥 Group ID:\n${groupId}`;
+      } else {
+        idInfo += `\n(This is a direct message, no Group ID)`;
+      }
+      idInfo += `\n\n💡 Tip: Use these IDs in the Admin Dashboard to assign specific AI roles!`;
+
+      logger.info(`User ${userId} requested ID information`);
+
+      const reply = {
+        type: 'text',
+        text: idInfo
+      };
+      return client.replyMessage(event.replyToken, reply);
+    }
 
     // Get or create session for this LINE user
     let sessionId = lineUserSessions.get(userId);
