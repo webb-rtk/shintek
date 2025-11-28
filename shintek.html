@@ -1,302 +1,782 @@
 <!doctype html>
-<html>
+<html lang="zh-TW">
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>欣騰達科技</title>
+<title>欣騰達科技 - AI人工智慧與通訊整合專家</title>
 <link href="css/multiColumnTemplate.css" rel="stylesheet" type="text/css">
-	<style>
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Microsoft JhengHei', 'Noto Sans TC', sans-serif;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Header Styles */
+.primary_header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 30px 20px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.primary_header h1 {
+    color: white;
+    margin: 0;
+    font-size: 2.5em;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+.tagline {
+    color: rgba(255,255,255,0.95);
+    font-size: 1.2em;
+    margin-top: 10px;
+    font-weight: 300;
+}
+
+/* Navigation */
+.secondary_header {
+    background: #2c3e50;
+    padding: 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.secondary_header ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.secondary_header li {
+    margin: 0;
+}
 
 a.menuItem {
-    text-decoration:none;
+    text-decoration: none;
     color: #FFFFFF;
+    display: block;
+    padding: 15px 25px;
+    transition: all 0.3s ease;
+    font-weight: 500;
 }
+
 a.menuItem:hover {
-	color: greenyellow;
-	cursor: pointer;
+    background: #34495e;
+    color: #3498db;
 }
-a.golink {
-    text-decoration:none;
-    color: red;
+
+a.menuItem.active {
+    background: #3498db;
+    color: white;
 }
-a.golink2 {
-    text-decoration:none;
-    color: #FFFFFF;
+
+/* Section Styles */
+section {
+    padding: 40px 20px;
+    animation: fadeIn 0.5s ease-in;
 }
-#service {
-	        display: none;
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
-#about {
-	        display: block;
+
+#about, #service, #train, #contact, #aichat {
+    display: none;
 }
-#train {
-	        display: none;
+
+#about.active, #service.active, #train.active, #contact.active, #aichat.active {
+    display: block;
 }
-#contact {
-	        display: none;
+
+/* Article Layout */
+.content-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: center;
+    margin-bottom: 30px;
 }
-#aichat {
-	        display: none;
+
+.left_article, .right_article {
+    padding: 20px;
 }
+
+.left_article h3 {
+    color: #667eea;
+    font-size: 2em;
+    margin-bottom: 20px;
+    border-bottom: 3px solid #667eea;
+    padding-bottom: 10px;
+}
+
+.left_article h4 {
+    color: #764ba2;
+    font-size: 1.5em;
+    margin-top: 25px;
+    margin-bottom: 15px;
+}
+
+.left_article p {
+    font-size: 1.1em;
+    color: #333;
+    margin: 15px 0;
+    line-height: 1.8;
+}
+
+.highlight-box {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 25px;
+    border-radius: 10px;
+    margin: 20px 0;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.highlight-box h4 {
+    color: #667eea;
+    margin-top: 0;
+}
+
+.highlight-box ul {
+    list-style: none;
+    padding: 0;
+}
+
+.highlight-box li {
+    padding: 10px 0;
+    padding-left: 30px;
+    position: relative;
+    font-size: 1.05em;
+}
+
+.highlight-box li:before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: #667eea;
+    font-weight: bold;
+    font-size: 1.3em;
+}
+
+.right_article img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease;
+}
+
+.right_article img:hover {
+    transform: scale(1.05);
+}
+
+/* Service Cards */
+.service-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+    margin: 30px 0;
+}
+
+.service-card {
+    background: white;
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    border-left: 4px solid #667eea;
+}
+
+.service-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+.service-card h4 {
+    color: #667eea;
+    margin-top: 0;
+    font-size: 1.3em;
+}
+
+.service-card .icon {
+    font-size: 3em;
+    margin-bottom: 15px;
+}
+
+/* Features Grid */
+.row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    padding: 40px 20px;
+    background: #f8f9fa;
+}
+
+.columns {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.columns:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+.columns h4 {
+    color: #667eea;
+    font-size: 1.4em;
+    margin: 15px 0;
+}
+
+.thumbnail_align {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.thumbnail {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+/* Chat Styles */
 .chat-container {
-	max-width: 800px;
-	margin: 20px auto;
-	background: white;
-	border-radius: 10px;
-	box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-	padding: 20px;
+    max-width: 900px;
+    margin: 20px auto;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    padding: 30px;
 }
+
 .chat-messages {
-	height: 400px;
-	overflow-y: auto;
-	border: 1px solid #ddd;
-	border-radius: 5px;
-	padding: 15px;
-	margin-bottom: 15px;
-	background: #f9f9f9;
+    height: 450px;
+    overflow-y: auto;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    background: #f8f9fa;
 }
+
 .message {
-	margin-bottom: 15px;
-	padding: 10px 15px;
-	border-radius: 8px;
-	max-width: 80%;
+    margin-bottom: 15px;
+    padding: 12px 18px;
+    border-radius: 12px;
+    max-width: 80%;
+    animation: slideIn 0.3s ease;
 }
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateX(-10px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
 .message.user {
-	background: #007bff;
-	color: white;
-	margin-left: auto;
-	text-align: right;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    margin-left: auto;
+    text-align: right;
 }
+
 .message.bot {
-	background: #e9ecef;
-	color: #333;
-	margin-right: auto;
-	white-space: pre-wrap;
+    background: #e9ecef;
+    color: #333;
+    margin-right: auto;
+    white-space: pre-wrap;
+    border-left: 4px solid #667eea;
 }
+
 .chat-input-container {
-	display: flex;
-	gap: 10px;
+    display: flex;
+    gap: 10px;
 }
+
 .chat-input {
-	flex: 1;
-	padding: 10px;
-	border: 1px solid #ddd;
-	border-radius: 5px;
-	font-size: 14px;
+    flex: 1;
+    padding: 12px 15px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: border-color 0.3s ease;
 }
+
+.chat-input:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
 .chat-button {
-	padding: 10px 20px;
-	background: #007bff;
-	color: white;
-	border: none;
-	border-radius: 5px;
-	cursor: pointer;
-	font-size: 14px;
+    padding: 12px 25px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    transition: all 0.3s ease;
 }
+
 .chat-button:hover {
-	background: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
+
 .chat-button:disabled {
-	background: #6c757d;
-	cursor: not-allowed;
+    background: #6c757d;
+    cursor: not-allowed;
 }
+
 .loading {
-	color: #666;
-	font-style: italic;
+    color: #666;
+    font-style: italic;
 }
-	</style>
-	<script>
-		function handleClick(i) {
-          document.getElementById("about").style.display="none";
-          document.getElementById("train").style.display="none";
-          document.getElementById("contact").style.display="none";
-          document.getElementById("service").style.display="none";
-          document.getElementById("aichat").style.display="none";
-      switch (i){
-        case 0:
-          document.getElementById("about").style.display="block";
-          break;
-        case 1:
-          document.getElementById("service").style.display="block";
-          break;
-        case 2:
-          document.getElementById("train").style.display="block";
-          break;
-        case 3:
-          document.getElementById("contact").style.display="block";
-          break;
-        case 4:
-          document.getElementById("aichat").style.display="block";
-          break;
-      }
+
+/* Links */
+a.golink {
+    text-decoration: none;
+    color: #667eea;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+a.golink:hover {
+    color: #764ba2;
+    text-decoration: underline;
+}
+
+a.golink2 {
+    text-decoration: none;
+    color: #FFFFFF;
+    transition: color 0.3s ease;
+}
+
+a.golink2:hover {
+    color: #3498db;
+}
+
+/* Footer Columns */
+.blockDisplay {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    background: #2c3e50;
+    padding: 30px 20px;
+}
+
+.column_half {
+    padding: 20px;
+    text-align: center;
+}
+
+.column_title {
+    color: white;
+    font-size: 1.3em;
+}
+
+/* Footer */
+.footer {
+    background: #1a252f;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+.copyright {
+    color: rgba(255,255,255,0.8);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .primary_header h1 {
+        font-size: 1.8em;
     }
 
-    let sessionId = null;
-
-    async function sendMessage() {
-        const input = document.getElementById('chatInput');
-        const messagesDiv = document.getElementById('chatMessages');
-        const sendBtn = document.getElementById('sendBtn');
-        const message = input.value.trim();
-
-        if (!message) return;
-
-        // Add user message to UI
-        addMessageToUI(message, 'user');
-        input.value = '';
-        sendBtn.disabled = true;
-
-        // Show loading indicator
-        const loadingId = addMessageToUI('正在思考中...', 'bot', true);
-
-        try {
-            // Call API
-            const response = await fetch('/api/gemini/chat', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                    // API key not required in development mode
-                },
-                body: JSON.stringify({
-                    messages: [{ role: 'user', content: message }],
-                    sessionId: sessionId
-                })
-            });
-
-            const data = await response.json();
-
-            // Remove loading indicator
-            removeMessage(loadingId);
-
-            if (data.success) {
-                // Update session ID
-                sessionId = data.data.sessionId;
-
-                // Add bot response to UI
-                addMessageToUI(data.data.reply, 'bot');
-            } else {
-                let errorMsg = '錯誤: ' + data.message;
-                if (data.errors && data.errors.length > 0) {
-                    errorMsg += '\n詳細: ' + data.errors.map(e => e.msg || e.message).join(', ');
-                }
-                addMessageToUI(errorMsg, 'bot');
-                console.error('API Error:', data);
-            }
-        } catch (error) {
-            removeMessage(loadingId);
-            addMessageToUI('連接錯誤: ' + error.message, 'bot');
-        } finally {
-            sendBtn.disabled = false;
-        }
+    .tagline {
+        font-size: 1em;
     }
 
-    function addMessageToUI(text, role, isLoading = false) {
-        const messagesDiv = document.getElementById('chatMessages');
-        const messageDiv = document.createElement('div');
-        const messageId = 'msg-' + Date.now();
-        messageDiv.id = messageId;
-        messageDiv.className = 'message ' + role + (isLoading ? ' loading' : '');
-        messageDiv.textContent = text;
-        messagesDiv.appendChild(messageDiv);
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        return messageId;
+    .content-wrapper {
+        grid-template-columns: 1fr;
     }
 
-    function removeMessage(messageId) {
-        const message = document.getElementById(messageId);
-        if (message) message.remove();
+    .secondary_header ul {
+        flex-direction: column;
     }
 
-    function clearChat() {
-        sessionId = null;
-        document.getElementById('chatMessages').innerHTML = '';
-        addMessageToUI('對話已清除。您好！我是 AI 助手，有什麼可以幫助您的嗎？', 'bot');
+    a.menuItem {
+        text-align: center;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
     }
 
-    // Allow Enter key to send message
-    document.addEventListener('DOMContentLoaded', function() {
-        const input = document.getElementById('chatInput');
-        if (input) {
-            input.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    sendMessage();
-                }
-            });
-        }
+    .blockDisplay {
+        grid-template-columns: 1fr;
+    }
+
+    .service-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Utility Classes */
+.noDisplay {
+    display: none;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.badge {
+    display: inline-block;
+    padding: 5px 15px;
+    background: #667eea;
+    color: white;
+    border-radius: 20px;
+    font-size: 0.9em;
+    margin: 5px;
+}
+</style>
+<script>
+let currentTab = 'about';
+
+function handleClick(i) {
+    // Remove active class from all sections and menu items
+    document.querySelectorAll('section').forEach(section => {
+        section.classList.remove('active');
     });
-	</script>
+    document.querySelectorAll('.menuItem').forEach(item => {
+        item.classList.remove('active');
+    });
+
+    const tabs = ['about', 'service', 'train', 'contact', 'aichat'];
+    currentTab = tabs[i];
+
+    // Show selected section
+    document.getElementById(currentTab).classList.add('active');
+
+    // Add active class to clicked menu item
+    document.querySelectorAll('.menuItem')[i].classList.add('active');
+}
+
+let sessionId = null;
+
+async function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const messagesDiv = document.getElementById('chatMessages');
+    const sendBtn = document.getElementById('sendBtn');
+    const message = input.value.trim();
+
+    if (!message) return;
+
+    // Add user message to UI
+    addMessageToUI(message, 'user');
+    input.value = '';
+    sendBtn.disabled = true;
+
+    // Show loading indicator
+    const loadingId = addMessageToUI('正在思考中...', 'bot', true);
+
+    try {
+        // Call API
+        const response = await fetch('/api/gemini/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                messages: [{ role: 'user', content: message }],
+                sessionId: sessionId
+            })
+        });
+
+        const data = await response.json();
+
+        // Remove loading indicator
+        removeMessage(loadingId);
+
+        if (data.success) {
+            // Update session ID
+            sessionId = data.data.sessionId;
+
+            // Add bot response to UI
+            addMessageToUI(data.data.reply, 'bot');
+        } else {
+            let errorMsg = '錯誤: ' + data.message;
+            if (data.errors && data.errors.length > 0) {
+                errorMsg += '\n詳細: ' + data.errors.map(e => e.msg || e.message).join(', ');
+            }
+            addMessageToUI(errorMsg, 'bot');
+            console.error('API Error:', data);
+        }
+    } catch (error) {
+        removeMessage(loadingId);
+        addMessageToUI('連接錯誤: ' + error.message, 'bot');
+    } finally {
+        sendBtn.disabled = false;
+    }
+}
+
+function addMessageToUI(text, role, isLoading = false) {
+    const messagesDiv = document.getElementById('chatMessages');
+    const messageDiv = document.createElement('div');
+    const messageId = 'msg-' + Date.now();
+    messageDiv.id = messageId;
+    messageDiv.className = 'message ' + role + (isLoading ? ' loading' : '');
+    messageDiv.textContent = text;
+    messagesDiv.appendChild(messageDiv);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    return messageId;
+}
+
+function removeMessage(messageId) {
+    const message = document.getElementById(messageId);
+    if (message) message.remove();
+}
+
+function clearChat() {
+    sessionId = null;
+    document.getElementById('chatMessages').innerHTML = '';
+    addMessageToUI('對話已清除。您好！我是欣騰達 AI 助手，專精於 AI 技術與通訊整合方案，有什麼可以幫助您的嗎？', 'bot');
+}
+
+// Allow Enter key to send message
+document.addEventListener('DOMContentLoaded', function() {
+    // Set default active tab
+    document.getElementById('about').classList.add('active');
+    document.querySelector('.menuItem').classList.add('active');
+
+    const input = document.getElementById('chatInput');
+    if (input) {
+        input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    }
+});
+</script>
 </head>
 <body>
 <div class="container">
   <header>
     <div class="primary_header">
       <h1 class="title">欣騰達科技有限公司</h1>
+      <p class="tagline">AI人工智慧與通訊整合專家 | 驅動智能未來</p>
     </div>
     <nav class="secondary_header" id="menu">
       <ul>
-		<li><a class="menuItem" href="javascript:handleClick(0)">關於我們</a></li>
+        <li><a class="menuItem" href="javascript:handleClick(0)">關於我們</a></li>
         <li><a class="menuItem" href="javascript:handleClick(1)">服務項目</a></li>
-        <li><a class="menuItem" href="javascript:handleClick(2)">科技新知</a></li>
+        <li><a class="menuItem" href="javascript:handleClick(2)">技術領域</a></li>
         <li><a class="menuItem" href="javascript:handleClick(3)">聯絡我們</a></li>
-        <li><a class="menuItem" href="javascript:handleClick(4)">AI 對話</a></li>
+        <li><a class="menuItem" href="javascript:handleClick(4)">AI 對話體驗</a></li>
       </ul>
     </nav>
   </header>
+
+  <!-- About Section -->
   <section id="about">
     <h2 class="noDisplay">About</h2>
-    <article class="left_article">
-      <h3>關於我們</h3>
-      <p>我們是一群擁有資訊，電機，通訊，經濟，化工，日文等經驗和學歷的創業家，</p>
-      <p>我們的目標是運用數位科技來成就美好的生活，歡迎和我們洽談合作事項。</p>
-    </article>
-    <aside class="right_article">
-        <img src="images/img_aboutUs.jpg" alt="" width="400" height="200" class="placeholder"/> 
+    <div class="content-wrapper">
+      <article class="left_article">
+        <h3>關於欣騰達科技</h3>
+        <p>我們是一群擁有資訊、電機、通訊、經濟、化工、日文等豐富經驗和學歷的創業團隊。</p>
+        <p><strong>我們的使命是運用尖端數位科技與AI人工智慧技術，結合先進通訊解決方案，成就更美好的智能生活。</strong></p>
+
+        <div class="highlight-box">
+          <h4>🎯 核心專長</h4>
+          <ul>
+            <li><strong>AI 人工智慧應用</strong> - 機器學習、深度學習、自然語言處理、電腦視覺</li>
+            <li><strong>智能通訊整合</strong> - LINE Bot、多平台通訊系統、IoT 物聯網通訊</li>
+            <li><strong>雲端架構設計</strong> - AWS、Google Cloud 企業級解決方案</li>
+            <li><strong>全端軟體開發</strong> - 網頁應用、行動應用、企業系統客製化</li>
+          </ul>
+        </div>
+
+        <p>歡迎與我們洽談合作，一起打造智能化的未來！</p>
+      </article>
+      <aside class="right_article">
+        <img src="images/img_aboutUs.jpg" alt="關於欣騰達科技" width="400" height="200" class="placeholder"/>
       </aside>
+    </div>
   </section>
+
+  <!-- Service Section -->
   <section id="service">
     <h2 class="noDisplay">SERVICE</h2>
-    <article class="left_article">
-      <h3>服務項目</h3>
-      <p>1.提供專業的技術諮詢</p>
-      <p>2.安排專業人員為您達成各式各樣的需求</p>
-      <p>3.製作客製的軟體</p>
-    </article>
-    <aside class="right_article"><img src="images/img_website.jpg" alt="" width="400" height="200" class="placeholder"/> </aside>
+    <div class="content-wrapper">
+      <article class="left_article">
+        <h3>專業服務項目</h3>
+        <p style="font-size: 1.2em; color: #667eea; font-weight: 600;">
+          以 AI 技術與通訊整合為核心，提供企業數位轉型全方位解決方案
+        </p>
+
+        <div class="service-grid">
+          <div class="service-card">
+            <div class="icon">🤖</div>
+            <h4>AI 智能系統開發</h4>
+            <p>• 智能客服 Bot 開發</p>
+            <p>• AI 對話系統整合</p>
+            <p>• 機器學習模型訓練</p>
+            <p>• 自動化智能解決方案</p>
+          </div>
+
+          <div class="service-card">
+            <div class="icon">💬</div>
+            <h4>通訊系統整合</h4>
+            <p>• LINE Bot 客製開發</p>
+            <p>• 多平台訊息整合</p>
+            <p>• 企業通訊系統建置</p>
+            <p>• IoT 設備通訊解決方案</p>
+          </div>
+
+          <div class="service-card">
+            <div class="icon">☁️</div>
+            <h4>雲端架構服務</h4>
+            <p>• AWS / GCP 雲端部署</p>
+            <p>• 系統架構設計與優化</p>
+            <p>• 資料庫設計與管理</p>
+            <p>• DevOps 自動化流程</p>
+          </div>
+
+          <div class="service-card">
+            <div class="icon">💻</div>
+            <h4>客製化軟體開發</h4>
+            <p>• 企業級網頁應用</p>
+            <p>• 行動 APP 開發</p>
+            <p>• 系統整合與 API 開發</p>
+            <p>• 技術諮詢與顧問服務</p>
+          </div>
+        </div>
+
+        <div class="highlight-box">
+          <h4>✨ 我們的優勢</h4>
+          <ul>
+            <li>豐富的 AI 與通訊技術實戰經驗</li>
+            <li>專業的跨領域技術團隊</li>
+            <li>快速回應與敏捷開發能力</li>
+            <li>完整的售後服務與技術支援</li>
+          </ul>
+        </div>
+      </article>
+      <aside class="right_article">
+        <img src="images/img_website.jpg" alt="專業服務項目" width="400" height="200" class="placeholder"/>
+      </aside>
+    </div>
   </section>
+
+  <!-- Tech Knowledge Section -->
   <section id="train">
-    <h2 class="noDisplay">Train</h2>
-    <article class="left_article">
-      <h3>5G簡介</h3>
-      <p>5G的就是5th generation mobile networks(第五代移動通信技術)，是4G的下一代技術。</p>
-      <p>5G的速度比4G更快，5G速度是4G的10~100倍，5G每平方公里可連接上百萬個裝置，有望達到萬物聯網的境界。</p>
-      <p>5G因為萬物互聯，速度又快，在應用上可以達到萬物零距離溝通的效果，是人類未來最重要的進步之一。</p>
-      <h3>Deep Learning簡介</h3>
-      <p>Deep Learning就是深度學習，是使用數學計算來模仿生物神經系統的做法。因為是模仿生物神經系統，所以可以達到類似生物能辨識影像，辨識聲音或判斷是非的能力。</p>
-      <p>就像生物需要學習，Deep Learning的做法也需要有學習的過程稱為訓練(Training)，訓練大概是透過收集大量的相關資料，然後對這些相關資料進行數學計算，然後根據計算結果來調整計算公式，以便以後遇到全新的資料時，可以得到預期的計算結果。</p>
-      <p>Deep Learning需要大量且快速的計算，拜科技的日新月異，現在的電腦已經可以符合此需求，因此各種利用Deep Learning的應用正在快速的展開中。</p>
-    </article>
-    <aside class="right_article"><img src="images/5G_1.jpg" alt="" width="400" height="200" class="placeholder"/> </aside>
+    <h2 class="noDisplay">Technology</h2>
+    <div class="content-wrapper">
+      <article class="left_article">
+        <h3>技術領域專長</h3>
+
+        <h4>🤖 AI 人工智慧技術</h4>
+        <p><strong>Deep Learning (深度學習)</strong> 是使用數學計算來模仿生物神經系統的技術。透過模仿生物神經系統，可以達到類似生物辨識影像、辨識聲音或判斷決策的能力。</p>
+
+        <div class="highlight-box">
+          <h4>我們的 AI 應用領域：</h4>
+          <ul>
+            <li><strong>自然語言處理 (NLP)</strong> - 智能對話系統、文字分析、語意理解</li>
+            <li><strong>電腦視覺 (Computer Vision)</strong> - 圖像識別、OCR 文字辨識、物體偵測</li>
+            <li><strong>機器學習 (Machine Learning)</strong> - 預測模型、資料分析、智能推薦系統</li>
+            <li><strong>語音技術</strong> - 語音辨識、語音合成、聲紋識別</li>
+          </ul>
+        </div>
+
+        <p>Deep Learning 需要大量且快速的計算，拜科技的日新月異，現在的雲端運算平台已經可以完美支援 AI 訓練需求，各種 AI 應用正在快速展開中。</p>
+
+        <h4>📡 5G 與通訊技術</h4>
+        <p><strong>5G</strong> 即第五代移動通信技術 (5th generation mobile networks)，是 4G 的下一代技術。</p>
+        <p>5G 的速度是 4G 的 10~100 倍，每平方公里可連接上百萬個裝置，實現真正的<strong>萬物聯網 (IoT)</strong>。</p>
+
+        <div class="highlight-box">
+          <h4>我們的通訊整合能力：</h4>
+          <ul>
+            <li><strong>即時通訊平台整合</strong> - LINE、Telegram、Slack 等多平台 Bot 開發</li>
+            <li><strong>IoT 物聯網通訊</strong> - MQTT、WebSocket 即時資料傳輸</li>
+            <li><strong>API 整合服務</strong> - RESTful API、GraphQL 系統串接</li>
+            <li><strong>雲端訊息佇列</strong> - 高可用性訊息處理架構</li>
+          </ul>
+        </div>
+
+        <p>5G 因為萬物互聯、速度超快，在應用上可以達到<strong>萬物零距離溝通</strong>的效果，結合 AI 技術，將開啟智能生活的新紀元。</p>
+      </article>
+      <aside class="right_article">
+        <img src="images/5G_1.jpg" alt="AI與5G技術" width="400" height="200" class="placeholder"/>
+      </aside>
+    </div>
   </section>
+
+  <!-- Contact Section -->
   <section id="contact">
-    <h2 class="noDisplay">Content</h2>
-    <article class="left_article">
-      <h3>聯絡我們</h3>
-      <p>email:</p>
-      <p>yoko7890y@gmail.com</p>
-    </article>
-    <aside class="right_article"><img src="images/company1.jpg" alt="" width="400" height="200" class="placeholder"/> </aside>
+    <h2 class="noDisplay">Contact</h2>
+    <div class="content-wrapper">
+      <article class="left_article">
+        <h3>聯絡我們</h3>
+        <p style="font-size: 1.2em;">讓我們一起探討 AI 與通訊技術如何為您的事業創造價值！</p>
+
+        <div class="highlight-box">
+          <h4>📧 聯絡資訊</h4>
+          <p><strong>Email:</strong> yoko7890y@gmail.com</p>
+          <p style="margin-top: 20px;">我們專精於：</p>
+          <ul style="list-style-type: none; padding-left: 0;">
+            <li>🤖 AI 智能系統開發與整合</li>
+            <li>💬 通訊平台 Bot 客製化開發</li>
+            <li>☁️ 雲端架構設計與部署</li>
+            <li>💡 企業數位轉型顧問諮詢</li>
+          </ul>
+        </div>
+
+        <p style="margin-top: 30px; font-size: 1.1em;">
+          無論您需要開發智能客服系統、整合多平台通訊、建置 AI 應用，或是進行雲端架構規劃，
+          我們都能提供專業的技術支援與解決方案。
+        </p>
+        <p style="font-weight: 600; color: #667eea; font-size: 1.15em;">
+          歡迎來信洽詢，讓我們為您打造智能化的未來！
+        </p>
+      </article>
+      <aside class="right_article">
+        <img src="images/company1.jpg" alt="聯絡我們" width="400" height="200" class="placeholder"/>
+      </aside>
+    </div>
   </section>
+
+  <!-- AI Chat Section -->
   <section id="aichat">
     <h2 class="noDisplay">AI Chat</h2>
     <div class="chat-container">
-      <h3 style="text-align: center; color: #333; margin-bottom: 20px;">🤖 AI 對話助手</h3>
-      <p style="text-align: center; color: #666; margin-bottom: 20px;">
-        這是AI 對話系統。您可以問我任何問題！
+      <h3 style="text-align: center; color: #667eea; margin-bottom: 10px; font-size: 2em;">
+        🤖 AI 智能對話體驗
+      </h3>
+      <p style="text-align: center; color: #666; margin-bottom: 25px; font-size: 1.1em;">
+        體驗我們的 AI 對話系統 - 採用先進的自然語言處理技術
       </p>
 
       <div id="chatMessages" class="chat-messages">
-        <div class="message bot">您好！我是 AI 助手。有什麼可以幫助您的嗎？</div>
+        <div class="message bot">您好！我是欣騰達 AI 助手。我可以協助您了解我們的 AI 技術、通訊整合服務，以及解答各種技術問題。有什麼可以幫助您的嗎？</div>
       </div>
 
       <div class="chat-input-container">
@@ -308,56 +788,71 @@ a.golink2 {
           maxlength="500"
         />
         <button id="sendBtn" class="chat-button" onclick="sendMessage()">發送</button>
-        <button class="chat-button" onclick="clearChat()" style="background: #6c757d;">清除</button>
+        <button class="chat-button" onclick="clearChat()" style="background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);">清除</button>
       </div>
 
-      <div style="margin-top: 15px; padding: 10px; background: #fff3cd; border-radius: 5px; font-size: 12px;">
-        <strong>提示：</strong>
-        <ul style="margin: 5px 0; padding-left: 20px;">
-          <li>您可以用中文或英文與 AI 對話</li>
-          <li>按 Enter 鍵也可以發送訊息</li>
-          <li>對話會保持上下文連貫性</li>
-          <li>點擊「清除」可以開始新的對話</li>
+      <div style="margin-top: 20px; padding: 15px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 8px; font-size: 13px;">
+        <strong style="color: #667eea;">💡 使用提示：</strong>
+        <ul style="margin: 10px 0; padding-left: 20px; color: #333;">
+          <li>您可以詢問關於 AI 技術、通訊整合、雲端服務等問題</li>
+          <li>支援中文與英文對話，按 Enter 鍵快速發送</li>
+          <li>AI 會記住對話上下文，提供連貫的回應</li>
+          <li>點擊「清除」可以開始全新的對話</li>
         </ul>
       </div>
     </div>
   </section>
+
+  <!-- Features Grid -->
   <div class="row">
     <div class="columns">
-      <p class="thumbnail_align"> <img src="images/hot1.jpg" alt="" class="thumbnail"/> </p>
-      <h4>youtube頻道製作</h4>
-      <p>將您的想法和點子，轉成youtube頻道。</p>
-      <p><a class="golink" href="https://www.youtube.com/@xkntown">youtube頻道作品</a></p>
+      <p class="thumbnail_align"> <img src="images/hot1.jpg" alt="YouTube頻道製作" class="thumbnail"/> </p>
+      <h4>YouTube 頻道製作</h4>
+      <p>運用 AI 技術協助內容創作，將您的想法和創意轉化為專業的 YouTube 頻道內容。</p>
+      <p><a class="golink" href="https://www.youtube.com/@xkntown">查看我們的頻道作品 →</a></p>
     </div>
     <div class="columns">
-      <p class="thumbnail_align"> <img src="images/hot2.jpg" alt="" class="thumbnail"/> </p>
-      <h4>網站經營</h4>
-      <p>幫助網站經營, 解決各種網站技術問題。</p>
+      <p class="thumbnail_align"> <img src="images/hot2.jpg" alt="AI智能網站" class="thumbnail"/> </p>
+      <h4>AI 智能網站開發</h4>
+      <p>整合 AI 功能的網站開發，包括智能客服、個性化推薦、自動化內容管理等先進功能。</p>
     </div>
     <div class="columns">
-      <p class="thumbnail_align"> <img src="images/hot3.jpg" alt="" class="thumbnail"/></p>
-
-      <h4>AI應用</h4>
-      <p>應用AI技術，將工作變簡單。</p>
-      <p>參考作品:<br>PC程式，可用camera辨識文書中的文字。</p>
+      <p class="thumbnail_align"> <img src="images/hot3.jpg" alt="AI應用開發" class="thumbnail"/></p>
+      <h4>AI 應用系統</h4>
+      <p>專業 AI 應用開發，讓工作更智能、更高效。</p>
+      <p><span class="badge">成功案例</span> OCR 文字辨識系統、智能影像分析平台</p>
     </div>
     <div class="columns">
-      <p class="thumbnail_align"> <img src="images/hot4.jpg" alt="" class="thumbnail"/> </p>
-      <h4>各種通訊軟體</h4>
-      <p>應用通訊技術，整合分散各地的工作。</p>
-      <p>參考作品:<br>藍芽傳輸程式，雲端應用程式</p>
+      <p class="thumbnail_align"> <img src="images/hot4.jpg" alt="通訊整合系統" class="thumbnail"/> </p>
+      <h4>通訊整合解決方案</h4>
+      <p>多平台通訊系統整合，連結分散各地的工作流程，打造無縫協作環境。</p>
+      <p><span class="badge">專長</span> LINE Bot、藍牙通訊、雲端訊息系統</p>
     </div>
   </div>
+
+  <!-- Learning Resources -->
   <div class="row blockDisplay">
     <div class="column_half left_half">
-      <h2 class="column_title"><a class="golink2" href="https://www.youtube.com/c/GrandmaCan%E6%88%91%E9%98%BF%E5%AC%A4%E9%83%BD%E6%9C%83/videos">學技術好站介紹</a></h2>
+      <h2 class="column_title">
+        <a class="golink2" href="https://www.youtube.com/c/GrandmaCan%E6%88%91%E9%98%BF%E5%AC%A4%E9%83%BD%E6%9C%83/videos">
+          📚 技術學習資源 (中文)
+        </a>
+      </h2>
     </div>
     <div class="column_half right_half">
-      <h2 class="column_title"><a class="golink2" href="https://www.youtube.com/@NetNinja">學技術好站介紹(全英文)</a></h2>
+      <h2 class="column_title">
+        <a class="golink2" href="https://www.youtube.com/@NetNinja">
+          🌐 國際技術資源 (English)
+        </a>
+      </h2>
     </div>
   </div>
+
+  <!-- Footer -->
   <footer class="secondary_header footer">
-    <div class="copyright">&copy;2023 - <strong>欣騰達科技有限公司</strong></div>
+    <div class="copyright">
+      &copy;2023-2025 - <strong>欣騰達科技有限公司</strong> | AI 人工智慧與通訊整合專家
+    </div>
   </footer>
 </div>
 </body>
