@@ -765,6 +765,7 @@
     <button class="tab-button" onclick="switchTab('roles')">AI Roles</button>
     <button class="tab-button" onclick="switchTab('users')">User Assignments</button>
     <button class="tab-button" onclick="switchTab('groups')">Group Assignments</button>
+    <button class="tab-button" onclick="switchTab('bots')">Bot Assignments</button>
     <button class="tab-button" onclick="switchTab('config')">Legacy Config</button>
   </div>
 
@@ -890,6 +891,45 @@
             </tr>
           </thead>
           <tbody id="groupAssignmentsBody">
+            <tr><td colspan="3" class="empty-table">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bot Assignments Tab -->
+  <div class="container tab-content" id="botsTab">
+    <div class="roles-container">
+      <div class="roles-header">
+        <h2>Bot Role Assignments</h2>
+      </div>
+      <div class="table-container">
+        <div class="add-form">
+          <h3>Assign Role to Bot</h3>
+          <div class="form-inline">
+            <div class="form-group">
+              <label>Bot ID</label>
+              <input type="text" id="newBotId" placeholder="Enter Bot ID">
+            </div>
+            <div class="form-group">
+              <label>Role</label>
+              <select id="newBotRole" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                <option value="">Select a role...</option>
+              </select>
+            </div>
+            <button class="btn-add" onclick="assignBotRole()">Assign</button>
+          </div>
+        </div>
+        <table class="data-table" id="botAssignmentsTable">
+          <thead>
+            <tr>
+              <th>Bot ID</th>
+              <th>Assigned Role</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="botAssignmentsBody">
             <tr><td colspan="3" class="empty-table">Loading...</td></tr>
           </tbody>
         </table>
@@ -1214,6 +1254,10 @@
       } else if (tab === 'groups') {
         document.getElementById('groupsTab').classList.add('active');
         loadGroupAssignments();
+        loadRoleOptions();
+      } else if (tab === 'bots') {
+        document.getElementById('botsTab').classList.add('active');
+        loadBotAssignments();
         loadRoleOptions();
       } else if (tab === 'config') {
         document.getElementById('configTab').classList.add('active');
@@ -1746,6 +1790,107 @@
       }
     }
 
+    // ==================== Bot Assignment Functions ====================
+
+    async function loadBotAssignments() {
+      try {
+        const response = await fetch('/admin/api/bot-roles', {
+          headers: { 'x-admin-token': token }
+        });
+
+        if (!response.ok) {
+          if (response.status === 401) {
+            localStorage.removeItem('adminToken');
+            window.location.href = '/admin/login';
+          }
+          throw new Error('Failed to load bot assignments');
+        }
+
+        const data = await response.json();
+        renderBotAssignments(data.botRoleMappings);
+      } catch (err) {
+        console.error('Failed to load bot assignments:', err);
+        document.getElementById('botAssignmentsBody').innerHTML = '<tr><td colspan="3" class="empty-table">Failed to load assignments</td></tr>';
+      }
+    }
+
+    function renderBotAssignments(mappings) {
+      const tbody = document.getElementById('botAssignmentsBody');
+
+      if (Object.keys(mappings).length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" class="empty-table">No bot assignments yet</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = Object.entries(mappings).map(([botId, roleId]) => `
+        <tr>
+          <td><code>${escapeHtml(botId)}</code></td>
+          <td><span class="badge badge-primary">${escapeHtml(roleId)}</span></td>
+          <td>
+            <button class="btn-delete" onclick="removeBotAssignment('${escapeHtml(botId)}')">Remove</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function assignBotRole() {
+      const botId = document.getElementById('newBotId').value.trim();
+      const roleId = document.getElementById('newBotRole').value;
+
+      if (!botId || !roleId) {
+        alert('Please enter a bot ID and select a role');
+        return;
+      }
+
+      try {
+        const response = await fetch('/admin/api/bot-roles', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-admin-token': token
+          },
+          body: JSON.stringify({ botId, roleId })
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to assign role');
+        }
+
+        document.getElementById('newBotId').value = '';
+        document.getElementById('newBotRole').value = '';
+        loadBotAssignments();
+        alert('Bot role assigned successfully!');
+      } catch (err) {
+        console.error('Failed to assign bot role:', err);
+        alert('Failed to assign role: ' + err.message);
+      }
+    }
+
+    async function removeBotAssignment(botId) {
+      if (!confirm(`Remove role assignment for bot ${botId}?`)) {
+        return;
+      }
+
+      try {
+        const response = await fetch(`/admin/api/bot-roles/${encodeURIComponent(botId)}`, {
+          method: 'DELETE',
+          headers: { 'x-admin-token': token }
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to remove assignment');
+        }
+
+        loadBotAssignments();
+        alert('Bot assignment removed successfully!');
+      } catch (err) {
+        console.error('Failed to remove bot assignment:', err);
+        alert('Failed to remove assignment: ' + err.message);
+      }
+    }
+
     // ==================== Utility Functions ====================
 
     async function loadRoleOptions() {
@@ -1759,12 +1904,14 @@
         const data = await response.json();
         const userSelect = document.getElementById('newUserRole');
         const groupSelect = document.getElementById('newGroupRole');
+        const botSelect = document.getElementById('newBotRole');
 
         const options = '<option value="">Select a role...</option>' +
           data.roles.map(role => `<option value="${escapeHtml(role.roleId)}">${escapeHtml(role.name)}</option>`).join('');
 
         userSelect.innerHTML = options;
         groupSelect.innerHTML = options;
+        botSelect.innerHTML = options;
       } catch (err) {
         console.error('Failed to load role options:', err);
       }

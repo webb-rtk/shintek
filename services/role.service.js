@@ -34,6 +34,7 @@ class RoleService {
         },
         userRoleMapping: {},
         groupRoleMapping: {},
+        botRoleMapping: {},
         defaultRole: 'customer-service'
       };
     }
@@ -53,26 +54,31 @@ class RoleService {
   }
 
   /**
-   * Get role configuration for a specific user/group
-   * Priority: User mapping > Group mapping > Default role
+   * Get role configuration for a specific user/group/bot
+   * Priority: Bot mapping > User mapping > Group mapping > Default role
    * @param {string} userId - LINE user ID
    * @param {string} groupId - LINE group ID (optional)
+   * @param {string} botId - Bot ID (optional)
    * @returns {object} Role configuration
    */
-  getRoleForUser(userId, groupId = null) {
+  getRoleForUser(userId, groupId = null, botId = null) {
     this.loadConfig(); // Reload config to get latest changes
 
     let roleId = null;
 
-    // 1. Check if user has explicit role assignment
-    if (this.config.userRoleMapping && this.config.userRoleMapping[userId]) {
+    // 1. Check if bot has explicit role assignment
+    if (botId && this.config.botRoleMapping && this.config.botRoleMapping[botId]) {
+      roleId = this.config.botRoleMapping[botId];
+    }
+    // 2. Check if user has explicit role assignment
+    else if (this.config.userRoleMapping && this.config.userRoleMapping[userId]) {
       roleId = this.config.userRoleMapping[userId];
     }
-    // 2. If in a group, check group role assignment
+    // 3. If in a group, check group role assignment
     else if (groupId && this.config.groupRoleMapping && this.config.groupRoleMapping[groupId]) {
       roleId = this.config.groupRoleMapping[groupId];
     }
-    // 3. Fall back to default role
+    // 4. Fall back to default role
     else {
       roleId = this.config.defaultRole || 'customer-service';
     }
@@ -191,6 +197,14 @@ class RoleService {
       });
     }
 
+    if (this.config.botRoleMapping) {
+      Object.keys(this.config.botRoleMapping).forEach(botId => {
+        if (this.config.botRoleMapping[botId] === roleId) {
+          delete this.config.botRoleMapping[botId];
+        }
+      });
+    }
+
     return this.saveConfig();
   }
 
@@ -286,6 +300,53 @@ class RoleService {
   getGroupRoleMappings() {
     this.loadConfig();
     return this.config.groupRoleMapping || {};
+  }
+
+  /**
+   * Set role for a specific bot
+   * @param {string} botId - Bot ID
+   * @param {string} roleId - Role identifier
+   * @returns {boolean} Success status
+   */
+  setBotRole(botId, roleId) {
+    this.loadConfig();
+
+    if (!this.config.roles || !this.config.roles[roleId]) {
+      console.error(`Role ${roleId} not found`);
+      return false;
+    }
+
+    if (!this.config.botRoleMapping) {
+      this.config.botRoleMapping = {};
+    }
+
+    this.config.botRoleMapping[botId] = roleId;
+    return this.saveConfig();
+  }
+
+  /**
+   * Remove role assignment for a specific bot
+   * @param {string} botId - Bot ID
+   * @returns {boolean} Success status
+   */
+  removeBotRole(botId) {
+    this.loadConfig();
+
+    if (!this.config.botRoleMapping || !this.config.botRoleMapping[botId]) {
+      return false;
+    }
+
+    delete this.config.botRoleMapping[botId];
+    return this.saveConfig();
+  }
+
+  /**
+   * Get all bot role mappings
+   * @returns {object} Bot to role mapping
+   */
+  getBotRoleMappings() {
+    this.loadConfig();
+    return this.config.botRoleMapping || {};
   }
 
   /**

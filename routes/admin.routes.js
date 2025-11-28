@@ -576,6 +576,79 @@ router.delete('/api/group-roles/:groupId', (req, res) => {
   }
 });
 
+// Get all bot role mappings
+router.get('/api/bot-roles', (req, res) => {
+  const token = req.headers['x-admin-token'];
+  if (!token || !validateSession(token)) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  try {
+    const botRoleMappings = roleService.getBotRoleMappings();
+    logger.info('Admin retrieved bot role mappings');
+    res.json({ botRoleMappings });
+  } catch (err) {
+    logger.error('Error retrieving bot role mappings', { error: err.message });
+    res.status(500).json({ error: 'Failed to retrieve bot role mappings' });
+  }
+});
+
+// Assign role to bot
+router.post('/api/bot-roles', (req, res) => {
+  const token = req.headers['x-admin-token'];
+  if (!token || !validateSession(token)) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  try {
+    const { botId, roleId } = req.body;
+
+    if (!botId || !roleId) {
+      return res.status(400).json({ error: 'botId and roleId are required' });
+    }
+
+    if (!roleService.roleExists(roleId)) {
+      return res.status(404).json({ error: 'Role not found' });
+    }
+
+    const success = roleService.setBotRole(botId, roleId);
+
+    if (success) {
+      logger.info('Admin assigned role to bot', { botId, roleId });
+      res.json({ success: true, message: 'Bot role assigned successfully' });
+    } else {
+      res.status(500).json({ error: 'Failed to assign bot role' });
+    }
+  } catch (err) {
+    logger.error('Error assigning bot role', { error: err.message });
+    res.status(500).json({ error: 'Failed to assign bot role' });
+  }
+});
+
+// Remove bot role assignment
+router.delete('/api/bot-roles/:botId', (req, res) => {
+  const token = req.headers['x-admin-token'];
+  if (!token || !validateSession(token)) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  try {
+    const { botId } = req.params;
+
+    const success = roleService.removeBotRole(botId);
+
+    if (success) {
+      logger.info('Admin removed bot role assignment', { botId });
+      res.json({ success: true, message: 'Bot role assignment removed successfully' });
+    } else {
+      res.status(404).json({ error: 'Bot role assignment not found' });
+    }
+  } catch (err) {
+    logger.error('Error removing bot role assignment', { error: err.message });
+    res.status(500).json({ error: 'Failed to remove bot role assignment' });
+  }
+});
+
 // Get default role
 router.get('/api/default-role', (req, res) => {
   const token = req.headers['x-admin-token'];

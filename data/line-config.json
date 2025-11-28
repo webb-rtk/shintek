@@ -33,5 +33,6 @@
   },
   "userRoleMapping": {},
   "groupRoleMapping": {},
+  "botRoleMapping": {},
   "defaultRole": "customer-service"
 }

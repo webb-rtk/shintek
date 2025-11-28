@@ -32,8 +32,8 @@ async function handleEvent(event, destination = null) {
     }
     logger.info(`📩 ${logParts.join(' | ')}`);
 
-    // Get role configuration for this user/group
-    const roleConfig = roleService.getRoleForUser(userId, groupId);
+    // Get role configuration for this user/group/bot
+    const roleConfig = roleService.getRoleForUser(userId, groupId, destination);
     logger.info(`🤖 Using role: ${roleConfig.roleId} (${roleConfig.name})`);
 
     // Handle sticker messages
