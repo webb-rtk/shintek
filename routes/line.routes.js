@@ -17,25 +17,31 @@ try {
   logger.error('Error loading LINE Bot SDK:', err);
 }
 
-// Validate LINE signature manually
-function validateSignature(body, signature, channelSecret) {
+// Validate LINE signature manually (same algorithm as LINE SDK)
+function validateSignature(bodyBuffer, signature, channelSecret) {
   const hash = crypto
     .createHmac('SHA256', channelSecret)
-    .update(Buffer.isBuffer(body) ? body : JSON.stringify(body))
+    .update(bodyBuffer)
     .digest('base64');
+
+  logger.info(`Signature validation - Expected: ${hash}, Received: ${signature}, Match: ${hash === signature}`);
   return hash === signature;
 }
 
 // Try to validate with all configured bot secrets
-function validateWithAllBots(body, signature) {
+function validateWithAllBots(bodyBuffer, signature) {
   if (!lineConfig) return null;
 
   const configs = lineConfig.getAllBotConfigs();
-  for (const config of configs) {
-    if (validateSignature(body, signature, config.channelSecret)) {
+  for (let i = 0; i < configs.length; i++) {
+    const config = configs[i];
+    logger.info(`Trying bot ${i + 1} with secret: ${config.channelSecret.substring(0, 8)}...`);
+    if (validateSignature(bodyBuffer, signature, config.channelSecret)) {
+      logger.info(`✓ Signature validated with bot ${i + 1}`);
       return config;
     }
   }
+  logger.error(`✗ Signature validation failed for all ${configs.length} configured bots`);
   return null;
 }
 
@@ -66,8 +72,8 @@ router.post('/webhook-test', async (req, res) => {
 router.post('/webhook',
   express.json({
     verify: (req, res, buf, encoding) => {
-      // Store raw body for signature validation
-      req.rawBody = buf.toString(encoding || 'utf8');
+      // Store raw body buffer for signature validation (LINE needs the raw bytes)
+      req.rawBody = buf;
     }
   }),
   async (req, res) => {
