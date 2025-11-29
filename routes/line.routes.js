@@ -1,22 +1,42 @@
 const express = require('express');
 const router = express.Router();
+const crypto = require('crypto');
 const logger = require('../utils/logger.util');
 
-let lineMiddleware = null;
 let handleEvent = null;
+let lineConfig = null;
 
 // Try to load LINE SDK dependencies
 try {
-  const { middleware } = require('@line/bot-sdk');
-  const lineConfig = require('../config/line.config');
+  lineConfig = require('../config/line.config');
   const lineService = require('../services/line.service');
-
-  lineMiddleware = middleware(lineConfig);
   handleEvent = lineService.handleEvent;
 
   logger.info('LINE Bot SDK loaded successfully');
 } catch (err) {
   logger.error('Error loading LINE Bot SDK:', err);
+}
+
+// Validate LINE signature manually
+function validateSignature(body, signature, channelSecret) {
+  const hash = crypto
+    .createHmac('SHA256', channelSecret)
+    .update(Buffer.isBuffer(body) ? body : JSON.stringify(body))
+    .digest('base64');
+  return hash === signature;
+}
+
+// Try to validate with all configured bot secrets
+function validateWithAllBots(body, signature) {
+  if (!lineConfig) return null;
+
+  const configs = lineConfig.getAllBotConfigs();
+  for (const config of configs) {
+    if (validateSignature(body, signature, config.channelSecret)) {
+      return config;
+    }
+  }
+  return null;
 }
 
 // Webhook endpoint - WITHOUT middleware for testing
@@ -42,71 +62,75 @@ router.post('/webhook-test', async (req, res) => {
   }
 });
 
-// Webhook endpoint - WITH LINE middleware
-router.post('/webhook', async (req, res) => {
-  logger.info('Webhook POST received - starting processing');
+// Webhook endpoint - WITH manual signature validation for multiple bots
+router.post('/webhook',
+  express.json({
+    verify: (req, res, buf, encoding) => {
+      // Store raw body for signature validation
+      req.rawBody = buf.toString(encoding || 'utf8');
+    }
+  }),
+  async (req, res) => {
+    logger.info('Webhook POST received - starting processing');
 
-  try {
-    const hasSignature = req.headers['x-line-signature'];
+    try {
+      const signature = req.headers['x-line-signature'];
 
-    // If LINE middleware is available and request has signature, use it for validation
-    if (lineMiddleware && handleEvent && hasSignature) {
-      logger.info('Using LINE middleware for signature validation');
+      // Validate signature with all configured bots
+      if (signature && lineConfig && handleEvent) {
+        const validConfig = validateWithAllBots(req.rawBody, signature);
 
-      // Apply middleware manually
-      lineMiddleware(req, res, async (err) => {
-        if (err) {
-          logger.error('LINE middleware error:', err);
+        if (!validConfig) {
+          logger.error('LINE signature validation failed for all bots', {
+            signature,
+            receivedFrom: req.body?.destination
+          });
           return res.status(403).json({
             success: false,
-            message: 'Signature validation failed',
-            error: err.message
+            message: 'Signature validation failed - no matching bot found'
           });
         }
 
-        try {
-          const destination = req.body.destination;
-          const events = req.body.events || [];
+        logger.info('Signature validated successfully');
 
-          logger.info(`📨 Webhook received - Bot ID: ${destination}, Events: ${events.length}`);
+        const destination = req.body.destination;
+        const events = req.body.events || [];
 
-          // Process all events in parallel, passing destination to each
-          await Promise.all(events.map(event => handleEvent(event, destination)));
+        logger.info(`📨 Webhook received - Bot ID: ${destination}, Events: ${events.length}`);
 
-          logger.info('LINE webhook events processed successfully');
-          res.status(200).end();
-        } catch (err) {
-          logger.error('Error processing LINE webhook events:', err);
-          res.status(500).json({ success: false, message: err.message });
-        }
-      });
-    } else if (!hasSignature) {
-      // No signature - this is a test request, not from LINE
-      logger.warn('No LINE signature found - processing as test request');
-      const events = req.body.events || [];
-      logger.info('Received webhook test request:', JSON.stringify(req.body));
+        // Process all events in parallel, passing destination to each
+        await Promise.all(events.map(event => handleEvent(event, destination)));
 
-      res.status(200).json({
-        success: true,
-        message: 'Test webhook received (no signature validation)',
-        note: 'Real LINE requests will include X-Line-Signature header',
-        eventsReceived: events.length
-      });
-    } else {
-      // SDK not loaded properly
-      logger.error('LINE SDK not loaded properly');
-      res.status(500).json({
-        success: false,
-        message: 'LINE SDK not configured properly',
-        sdkLoaded: lineMiddleware !== null,
-        handlerLoaded: handleEvent !== null
-      });
+        logger.info('LINE webhook events processed successfully');
+        return res.status(200).end();
+
+      } else if (!signature) {
+        // No signature - this is a test request, not from LINE
+        logger.warn('No LINE signature found - processing as test request');
+        const events = req.body?.events || [];
+        logger.info('Received webhook test request:', JSON.stringify(req.body));
+
+        return res.status(200).json({
+          success: true,
+          message: 'Test webhook received (no signature validation)',
+          note: 'Real LINE requests will include X-Line-Signature header',
+          eventsReceived: events.length
+        });
+      } else {
+        // SDK not loaded properly
+        logger.error('LINE SDK not loaded properly');
+        return res.status(500).json({
+          success: false,
+          message: 'LINE SDK not configured properly',
+          handleEventLoaded: handleEvent !== null
+        });
+      }
+    } catch (err) {
+      logger.error('Error in LINE webhook:', err);
+      return res.status(500).json({ success: false, message: err.message });
     }
-  } catch (err) {
-    logger.error('Error in LINE webhook:', err);
-    res.status(500).json({ success: false, message: err.message });
   }
-});
+);
 
 // Health check endpoint
 router.get('/health', (req, res) => {

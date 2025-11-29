@@ -5,7 +5,38 @@ const geminiService = require('./gemini.service');
 const sessionService = require('./session.service');
 const roleService = require('./role.service');
 
-const client = new Client(lineConfig);
+// Create clients for all configured bots
+const clients = new Map();
+
+function getClient(destination) {
+  // Try to get specific client for this destination
+  if (destination && clients.has(destination)) {
+    return clients.get(destination);
+  }
+
+  // Get the appropriate config for this destination
+  const config = lineConfig.getBotConfig(destination);
+
+  // Check if we already have a client for this config
+  const configKey = config.channelAccessToken;
+  if (clients.has(configKey)) {
+    return clients.get(configKey);
+  }
+
+  // Create new client for this config
+  const client = new Client(config);
+  clients.set(configKey, client);
+
+  if (destination) {
+    clients.set(destination, client);
+  }
+
+  logger.info(`Created new LINE client for destination: ${destination || 'default'}`);
+  return client;
+}
+
+// Legacy default client
+const client = getClient(null);
 
 // Store LINE user sessions (maps LINE userId to sessionId)
 const lineUserSessions = new Map();
@@ -43,7 +74,8 @@ async function handleEvent(event, destination = null) {
         type: 'text',
         text: roleConfig.stickerReplyText
       };
-      return client.replyMessage(event.replyToken, stickerReply);
+      const botClient = getClient(destination);
+      return botClient.replyMessage(event.replyToken, stickerReply);
     }
 
     if (event.message.type !== 'text') {
@@ -75,7 +107,8 @@ async function handleEvent(event, destination = null) {
         type: 'text',
         text: idInfo
       };
-      return client.replyMessage(event.replyToken, reply);
+      const botClient = getClient(destination);
+      return botClient.replyMessage(event.replyToken, reply);
     }
 
     // Get or create session for this LINE user
@@ -127,7 +160,8 @@ async function handleEvent(event, destination = null) {
       text: geminiResponse.reply.trim()
     };
 
-    return client.replyMessage(event.replyToken, reply);
+    const botClient = getClient(destination);
+    return botClient.replyMessage(event.replyToken, reply);
   } catch (err) {
     logger.error('Error handling LINE event:', err);
 
@@ -138,7 +172,8 @@ async function handleEvent(event, destination = null) {
     };
 
     try {
-      return client.replyMessage(event.replyToken, errorReply);
+      const botClient = getClient(destination);
+      return botClient.replyMessage(event.replyToken, errorReply);
     } catch (replyErr) {
       logger.error('Error sending error reply:', replyErr);
       return Promise.reject(err);
