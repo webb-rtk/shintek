@@ -8,7 +8,26 @@ const roleService = require('./role.service');
 // Create clients for all configured bots
 const clients = new Map();
 
-function getClient(destination) {
+function getClient(destination, botConfig = null) {
+  // If a specific bot config is provided, use it (from signature validation)
+  if (botConfig) {
+    const configKey = botConfig.channelAccessToken;
+    if (clients.has(configKey)) {
+      return clients.get(configKey);
+    }
+
+    // Create new client for this config
+    const client = new Client(botConfig);
+    clients.set(configKey, client);
+
+    if (destination) {
+      clients.set(destination, client);
+    }
+
+    logger.info(`Created new LINE client from validated config for destination: ${destination || 'unknown'}`);
+    return client;
+  }
+
   // Try to get specific client for this destination
   if (destination && clients.has(destination)) {
     return clients.get(destination);
@@ -41,7 +60,7 @@ const client = getClient(null);
 // Store LINE user sessions (maps LINE userId to sessionId)
 const lineUserSessions = new Map();
 
-async function handleEvent(event, destination = null) {
+async function handleEvent(event, destination = null, botConfig = null) {
   try {
     if (event.type !== 'message') {
       // Ignore non-message events
@@ -74,7 +93,7 @@ async function handleEvent(event, destination = null) {
         type: 'text',
         text: roleConfig.stickerReplyText
       };
-      const botClient = getClient(destination);
+      const botClient = getClient(destination, botConfig);
       return botClient.replyMessage(event.replyToken, stickerReply);
     }
 
@@ -107,7 +126,7 @@ async function handleEvent(event, destination = null) {
         type: 'text',
         text: idInfo
       };
-      const botClient = getClient(destination);
+      const botClient = getClient(destination, botConfig);
       return botClient.replyMessage(event.replyToken, reply);
     }
 
@@ -160,7 +179,7 @@ async function handleEvent(event, destination = null) {
       text: geminiResponse.reply.trim()
     };
 
-    const botClient = getClient(destination);
+    const botClient = getClient(destination, botConfig);
     return botClient.replyMessage(event.replyToken, reply);
   } catch (err) {
     logger.error('Error handling LINE event:', err);
@@ -172,7 +191,7 @@ async function handleEvent(event, destination = null) {
     };
 
     try {
-      const botClient = getClient(destination);
+      const botClient = getClient(destination, botConfig);
       return botClient.replyMessage(event.replyToken, errorReply);
     } catch (replyErr) {
       logger.error('Error sending error reply:', replyErr);

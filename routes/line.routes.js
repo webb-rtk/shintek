@@ -97,15 +97,15 @@ router.post('/webhook',
           });
         }
 
-        logger.info('Signature validated successfully');
+        logger.info('Signature validated successfully with matching bot config');
 
         const destination = req.body.destination;
         const events = req.body.events || [];
 
         logger.info(`📨 Webhook received - Bot ID: ${destination}, Events: ${events.length}`);
 
-        // Process all events in parallel, passing destination to each
-        await Promise.all(events.map(event => handleEvent(event, destination)));
+        // Process all events in parallel, passing destination AND the validated config to each
+        await Promise.all(events.map(event => handleEvent(event, destination, validConfig)));
 
         logger.info('LINE webhook events processed successfully');
         return res.status(200).end();
